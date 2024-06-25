@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      interval: 10s
+      timeout: 1s
+      retries: 5
+    volumes:
+      - db-data:/var/lib/postgresql/data # Persist database data
+    ports:
+      - ${DB_PORT}:${DB_PORT} # Map PostgresSQL port
+
+volumes:
+  db-data: # Define a named volume for PostgreSQL data persistence
