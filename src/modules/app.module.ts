@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from './typeorm.module';
+import { DatabaseModule } from './typeorm.module';
 import { UserModule } from './user.module';
+import { ChatModule } from './chat.module';
 
 @Module({
-  imports: [TypeOrmModule, UserModule],
+  imports: [DatabaseModule, UserModule, ChatModule],
 })
 export class AppModule {}
