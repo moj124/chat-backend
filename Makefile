@@ -32,9 +32,17 @@ start:
 	npm run start
 .PHONY: start
 
+start-dev:
+	npm run start:dev
+.PHONY: start-dev
+
+test:
+	npm run test:watch
+.PHONY: test
+
 # Useful aliases
 # -----------------------------------------------------------------------------------------------
 
 # first remove all docker containers if still running start up mailer, database images
-dev: down up-all
+dev: down up-all start-dev
 .PHONY: dev

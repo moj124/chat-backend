@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Global, Module } from '@nestjs/common';
 import {config} from 'dotenv';
+import { User } from '../entities/user.entity';
 
 config();
 
@@ -19,16 +20,17 @@ const {
       inject: [],
       useFactory: async () => {
         // using the factory function to create the datasource instance
+        const dataSource = new DataSource({
+          type: 'postgres',
+          host: 'localhost',
+          port: parseInt(DB_PORT,10),
+          username: DB_USER,
+          password: DB_PASSWORD,
+          synchronize: true,
+          entities: [User], // this will automatically load all entity file in the src folder
+        });
+
         try {
-          const dataSource = new DataSource({
-            type: 'postgres',
-            host: 'localhost',
-            port: parseInt(DB_PORT,10),
-            username: DB_USER,
-            password: DB_PASSWORD,
-            synchronize: true,
-            entities: [`${__dirname}/../entities/**.entity{.ts,.js}`], // this will automatically load all entity file in the src folder
-          });
           await dataSource.initialize(); // initialize the data source
           console.log('Database connected successfully');
           return dataSource;
