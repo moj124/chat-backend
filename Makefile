@@ -44,5 +44,5 @@ test:
 # -----------------------------------------------------------------------------------------------
 
 # first remove all docker containers if still running start up mailer, database images
-dev: down up-all start-dev
+dev: down up-all
 .PHONY: dev

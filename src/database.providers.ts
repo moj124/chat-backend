@@ -5,6 +5,7 @@ import {config} from 'dotenv';
 config();
 
 const {
+  DB_HOST,
   DB_PORT,
   DB_USER,
   DB_PASSWORD,
@@ -18,7 +19,7 @@ export const databaseProviders = [
       // using the factory function to create the datasource instance
       const dataSource = new DataSource({
         type: 'postgres',
-        host: 'localhost',
+        host: DB_HOST,
         port: parseInt(DB_PORT,10),
         username: DB_USER,
         password: DB_PASSWORD,
