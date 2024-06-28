@@ -1,11 +1,12 @@
 import { 
+  BadRequestException,
   ConflictException,
   Injectable, 
   InternalServerErrorException,
   Logger, 
   NotFoundException
 } from '@nestjs/common';
-import { User } from '../entities/user.entity';
+import { User } from './user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
@@ -51,17 +52,16 @@ export class UserService {
     }
   }
 
-  async create(user: Partial<User>): Promise<User> {
+  async create(user: User): Promise<User> {
     const checkUser = await this.findOne(user.id);
-    if (checkUser) {
-      throw new ConflictException('User already exists');
-    }
+    if (checkUser) throw new ConflictException('User already exists');
     
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
     try {
-      const createdUser = await this.userRepository.create(user);
-      await queryRunner.manager.save(createdUser)
+      const createdUser: User = await this.userRepository.create(user);
+
+      await queryRunner.manager.save(createdUser);
 
       await queryRunner.commitTransaction();
       return createdUser;

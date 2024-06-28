@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { User } from '../entities/user.entity';
+import { User } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { NotFoundException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('UserController', () => {
     let service: UserService;
@@ -11,6 +11,7 @@ describe('UserController', () => {
     const mockUserRepository = {
         find: jest.fn(),
         findOneBy: jest.fn(),
+        create: jest.fn()
     }
 
     const mockQueryRunner = {
@@ -128,32 +129,31 @@ describe('UserController', () => {
     
     describe('create', () => {
         it('should create a user', async () => {
-            jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
-            const removeSpy = mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
-            
-            await service.remove(testUser.id);
+            jest.spyOn(service, 'findOne').mockResolvedValueOnce(null);
 
+            mockUserRepository.create.mockResolvedValueOnce(testUser);
+            const createSpy = mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
 
-            expect(removeSpy).toHaveBeenCalledTimes(1);
-            expect(removeSpy).toHaveBeenCalledWith(User,testUser);
+            await service.create(testUser);
+
+            expect(createSpy).toHaveBeenCalled();
+            expect(createSpy).toHaveBeenCalledWith(testUser);
         });
 
-        it('should not create a user', async () => {
-           jest.spyOn(service, 'findOne').mockResolvedValueOnce(null);
-            mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
+        it('should not create a user when already exists', async () => {
+           jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
 
             try {
-                await service.remove(-1);
+                await service.create(testUser);
 
-                fail('remove() should have thrown NotFoundException');
+                fail('.findOne(user.id) should have thrown ConflictException');
               } catch (error) {
-                expect(error).toBeInstanceOf(NotFoundException);
-                expect(error.message).toBe('User does not exist');
+                expect(error).toBeInstanceOf(ConflictException);
+                expect(error.message).toBe('User already exists');
               }
 
-            expect(service.findOne).toHaveBeenCalledTimes(1);
-            expect(service.findOne).toHaveBeenCalledWith(-1);
-
+            expect(service.findOne).toHaveBeenCalled();
+            expect(service.findOne).toHaveBeenCalledWith(testUser.id);
         });
     });
 });
