@@ -31,7 +31,6 @@ describe('UserController', () => {
         password: "root",
         firstName: "first",
         lastName: "last",
-        isActive: true,
     } as User;
 
     beforeEach(async () => {

@@ -12,7 +12,6 @@ const testUser = {
     password: "root",
     firstName: "first",
     lastName: "last",
-    isActive: true,
 } as User;
 
 describe('UserController', () => {
@@ -40,6 +39,13 @@ describe('UserController', () => {
 
             expect(mockUserService.create).toHaveBeenCalled();
             expect(mockUserService.create).toHaveBeenCalledWith(testUser);
+        });
+
+        it('should not create a user', async () => {
+            await controller.signUp({} as User);
+
+            expect(mockUserService.create).toHaveBeenCalled();
+            expect(mockUserService.create).toHaveBeenCalledWith({} as User);
         });
     });
 });
