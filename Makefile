@@ -40,6 +40,9 @@ test:
 	npm run test:watch
 .PHONY: test
 
+exec:
+	${DOCKER_EXEC} api /bin/bash
+.PHONY: exec
 # Useful aliases
 # -----------------------------------------------------------------------------------------------
 
