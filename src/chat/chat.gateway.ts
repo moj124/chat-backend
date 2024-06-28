@@ -9,7 +9,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
-import { AddMessageDto } from './dto/addMessage.dto';
+import { AddMessageDto } from './addMessage.dto';
 
 @WebSocketGateway({ cors: { origin: '*' } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
