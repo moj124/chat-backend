@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { User } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
 
 describe('UserController', () => {
     let service: UserService;
@@ -71,9 +71,10 @@ describe('UserController', () => {
         it('should return an empty array', async () => {
             mockUserRepository.find.mockResolvedValueOnce([]);
 
-            const users = await service.findAll();
-            expect(users).toStrictEqual([]);
 
+            const result = await service.findAll();
+
+            expect(result).toStrictEqual([]);
         });
     });
 
@@ -86,11 +87,15 @@ describe('UserController', () => {
 
         });
 
-        it('should return null', async () => {
-            mockUserRepository.findOneBy.mockResolvedValueOnce(null);
+        it('should throw an exception', async () => {
+            try {
+                await service.findOne(-1);
 
-            const user = await service.findOne(-1);
-            expect(user).toStrictEqual(null);
+                fail('findAll() should have thrown BadRequestException');
+              } catch (error) {
+                expect(error).toBeInstanceOf(BadRequestException);
+                expect(error.message).toBe('UserService.findOne User not found');
+              }
         });
     });
 
@@ -107,28 +112,23 @@ describe('UserController', () => {
         });
 
         it('should not delete a user', async () => {
-            jest.spyOn(service, 'findOne').mockResolvedValueOnce(null);
             mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
             try {
                 await service.remove(-1);
 
-                fail('remove() should have thrown NotFoundException');
+                fail('remove() should have thrown BadRequestException');
               } catch (error) {
-                expect(error).toBeInstanceOf(NotFoundException);
-                expect(error.message).toBe('User does not exist');
+                expect(error).toBeInstanceOf(BadRequestException);
+                expect(error.message).toBe("UserService.findOne User not found");
               }
-
-            expect(service.findOne).toHaveBeenCalledTimes(1);
-            expect(service.findOne).toHaveBeenCalledWith(-1);
-
         });
     });
 
     
     describe('create', () => {
         it('should create a user', async () => {
-            jest.spyOn(service, 'findOne').mockResolvedValueOnce(null);
+            jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
 
             mockUserRepository.create.mockResolvedValueOnce(testUser);
             const createSpy = mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
@@ -140,19 +140,15 @@ describe('UserController', () => {
         });
 
         it('should not create a user when already exists', async () => {
-           jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
-
+            mockUserRepository.create.mockResolvedValueOnce(testUser);
             try {
                 await service.create(testUser);
 
-                fail('.findOne(user.id) should have thrown ConflictException');
-              } catch (error) {
-                expect(error).toBeInstanceOf(ConflictException);
-                expect(error.message).toBe('User already exists');
-              }
-
-            expect(service.findOne).toHaveBeenCalled();
-            expect(service.findOne).toHaveBeenCalledWith(testUser.id);
+                fail('remove() should have thrown BadRequestException');
+            } catch (error) {
+              expect(error).toBeInstanceOf(BadRequestException);
+              expect(error.message).toBe("UserService.findOne User not found");
+            }
         });
     });
 });

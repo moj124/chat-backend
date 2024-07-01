@@ -25,36 +25,16 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User | null> {
-    const user: User = await this.userRepository.findOneBy({ id });
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new BadRequestException('UserService.findOne User not found');
+    }
     return user;
   }
 
-  async remove(id: number): Promise<void> {
-    const user = await this.findOne(id);
-
-    if (!user) throw new NotFoundException('User does not exist');
-
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      await queryRunner.manager.delete(User, user);
-  
-      await queryRunner.commitTransaction();
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-
-      throw err;
-    } finally {
-      await queryRunner.release();
-    }
-  }
-
   async create(user: User): Promise<User> {
-    const checkUser = await this.findOne(user.id);
-    if (checkUser) throw new ConflictException('User already exists');
+    await this.findOne(user.id);
     
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -75,6 +55,49 @@ export class UserService {
       )
     }
     finally {
+      await queryRunner.release();
+    }
+  }
+
+  async update(id: number, user: User): Promise<User> {
+    await this.findOne(id);
+    
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.update(User, id, user);
+
+      await queryRunner.commitTransaction();
+      return user;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async remove(id: number): Promise<void> {
+    const user = await this.findOne(id);
+
+    const queryRunner = this.dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.delete(User, user);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      throw error;
+    } finally {
       await queryRunner.release();
     }
   }
