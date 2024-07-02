@@ -2,7 +2,11 @@ name: Node CI with Api
 
 on:
   push:
+    branches:
+      - '**'
   pull_request:
+    branches:
+      - '**'
 
 
 jobs:
