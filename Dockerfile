@@ -22,7 +22,7 @@ COPY --link . .
 EXPOSE 3000
 CMD ["npm", "run", "start:dev"]
 
-FROM base AS BUILD
+FROM base AS build
 RUN npm ci 
 COPY --link . .
 RUN npm run build
