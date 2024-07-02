@@ -17,6 +17,7 @@ services:
       - ${DB_PORT}:5432 # Map PostgresSQL port
   
   api:
+    image: moj124/chat-api:latest
     restart: always
     build:
       context: .
