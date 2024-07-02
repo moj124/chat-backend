@@ -46,6 +46,5 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/Dockerfile
           push: true
           tags: moj124/chat-api:latest

@@ -17,10 +17,11 @@ services:
       - ${DB_PORT}:5432 # Map PostgresSQL port
   
   api:
+    image: moj124/chat-api:latest
     restart: always
     build:
       context: .
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
     depends_on:
       - db
     environment:
