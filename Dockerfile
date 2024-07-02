@@ -5,16 +5,7 @@ ARG NODE_VERSION=20.14.0
 FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="NestJS"
-
-# NestJS app lives here
 WORKDIR /app
-
-# Set production environment
-ENV NODE_ENV="production"
-
-
-# Throw-away build stage to reduce size of final image
-FROM base AS build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
@@ -22,21 +13,23 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package-lock.json package.json ./
-RUN npm ci --include=dev
 
-# Copy application code
+FROM base AS development
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+RUN npm install --include=dev
 COPY --link . .
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
 
-# Build application
+FROM base AS build
+RUN npm ci 
+COPY --link . .
 RUN npm run build
 
-
-# Final stage for app image
-FROM base
-
-# Copy built application
+FROM base AS production
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 COPY --from=build /app /app
-
-# Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
 CMD [ "npm", "run", "start" ]
