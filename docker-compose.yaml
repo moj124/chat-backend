@@ -18,7 +18,9 @@ services:
   
   api:
     restart: always
-    image: node:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - db
     environment:
