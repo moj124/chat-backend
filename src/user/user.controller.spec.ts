@@ -74,7 +74,7 @@ describe('UserController', () => {
         it('should be empty array', async () => {
             mockUserService.findAll.mockResolvedValueOnce([]);
             const result = await controller.findAll();
-            expect(result).toEqual([testUser1]);
+            expect(result).toEqual([]);
         });
     });
 
