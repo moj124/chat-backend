@@ -20,7 +20,7 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     depends_on:
       - db
     environment:
@@ -33,7 +33,6 @@ services:
       - .:/app
     ports:
       - 3000:3000
-    command: ["npm", "run", "start:dev"]
 
 volumes:
   db-data: # Define a named volume for PostgreSQL data persistence

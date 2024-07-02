@@ -1,5 +1,5 @@
 #Makefile variables, make code simplier
-COMPOSE_FILE ?= docker-compose.yml
+COMPOSE_FILE ?= docker-compose.yaml
 DOCKER_COMPOSE ?= docker-compose -f ${COMPOSE_FILE}
 DOCKER_EXEC ?= docker-compose exec -it
 DOCKER_RUN ?= ${DOCKER_COMPOSE} run --rm --service-ports
