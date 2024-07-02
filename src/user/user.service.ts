@@ -9,6 +9,7 @@ import {
 import { User } from './user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { UserRegister } from '../utils/types';
 
 @Injectable()
 export class UserService {
@@ -25,16 +26,16 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+  async findOne(criteria: Partial<User>): Promise<User> {
+    const user = await this.userRepository.findOneBy(criteria);
     if (!user) {
       throw new BadRequestException('UserService.findOne User not found');
     }
     return user;
   }
 
-  async create(user: User): Promise<User> {
-    await this.findOne(user.id);
+  async create(user: UserRegister): Promise<User> {
+    await this.findOne(user);
     
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -60,7 +61,7 @@ export class UserService {
   }
 
   async update(id: number, user: User): Promise<User> {
-    await this.findOne(id);
+    await this.findOne(user);
     
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -82,7 +83,7 @@ export class UserService {
   }
 
   async remove(id: number): Promise<void> {
-    const user = await this.findOne(id);
+    const user = await this.findOne({ id });
 
     const queryRunner = this.dataSource.createQueryRunner();
 

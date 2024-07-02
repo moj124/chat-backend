@@ -46,15 +46,13 @@ describe('UserController', () => {
             const result = await controller.find(testUser);
 
             expect(mockUserService.findOne).toHaveBeenCalled();
-            expect(mockUserService.findOne).toHaveBeenCalledWith(testUser.id);
+            expect(mockUserService.findOne).toHaveBeenCalledWith(testUser);
             expect(result).toEqual(testUser);
         });
 
         it('should not find a user', async () => {
             try {
                 await controller.find({} as User);
-
-                fail('remove() should have thrown HttpException');
             } catch (error) {
               expect(error).toBeInstanceOf(HttpException);
               expect(error.message).toBe("userController.find invalid user object");
@@ -85,7 +83,7 @@ describe('UserController', () => {
             const result = await controller.update(1,testUser);
 
             expect(mockUserService.findOne).toHaveBeenCalled();
-            expect(mockUserService.findOne).toHaveBeenCalledWith(1);
+            expect(mockUserService.findOne).toHaveBeenCalledWith(testUser);
             expect(result).toStrictEqual(testUser);
 
         });

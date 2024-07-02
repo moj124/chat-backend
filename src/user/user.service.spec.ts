@@ -82,14 +82,14 @@ describe('UserController', () => {
         it('should return a single user', async () => {
             mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
 
-            const serviceUser = await service.findOne(testUser.id);
+            const serviceUser = await service.findOne(testUser);
             expect(serviceUser).toStrictEqual(testUser);
 
         });
 
         it('should throw an exception', async () => {
             try {
-                await service.findOne(-1);
+                await service.findOne({ id: -1 });
 
                 fail('findAll() should have thrown BadRequestException');
               } catch (error) {
