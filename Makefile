@@ -1,5 +1,5 @@
 #Makefile variables, make code simplier
-COMPOSE_FILE ?= docker-compose.yaml
+COMPOSE_FILE ?= docker-compose.dev.yaml
 DOCKER_COMPOSE ?= docker-compose -f ${COMPOSE_FILE}
 DOCKER_EXEC ?= docker-compose exec -it
 DOCKER_RUN ?= ${DOCKER_COMPOSE} run --rm --service-ports
@@ -46,6 +46,5 @@ exec:
 # Useful aliases
 # -----------------------------------------------------------------------------------------------
 
-# first remove all docker containers if still running start up mailer, database images
 dev: down up-all
 .PHONY: dev
