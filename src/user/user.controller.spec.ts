@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User } from './user.entity';
-import { HttpException } from '@nestjs/common';
+import { BadRequestException, HttpException } from '@nestjs/common';
+import { UserLogin, UserRegister } from '../utils/types';
+import isUser from '../utils/isUser';
+import { response } from 'express';
+import generateToken from '../utils/generateToken';
+import * as bcrypt from 'bcrypt';
 
 const mockUserService = {
     create: jest.fn(),
@@ -10,8 +15,13 @@ const mockUserService = {
     findAll: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
-
 };
+
+jest.mock('bcrypt');
+jest.mock('../utils/isUser');
+jest.mock('../utils/generateToken');
+jest.mock('../utils/setCookieJWT');
+
 
 const testUser = {
     id: 1,
@@ -21,11 +31,27 @@ const testUser = {
     lastName: "last",
 } as User;
 
+const testRegister = {
+    username: "root1",
+    password: "root",
+    firstName: "first",
+    lastName: "last",
+} as UserRegister;
+
+const testLogin = {
+    username: "root1",
+    password: "root",
+    firstName: "first",
+    lastName: "last",
+} as UserLogin;
+
 describe('UserController', () => {
     let controller: UserController;
     let service: UserService;
 
     beforeEach(async () => {
+        process.env.JWT_SECRET = 'test-secret'; // Mock the environment variable
+
         const testModule: TestingModule = await Test.createTestingModule({
             controllers: [UserController],
             providers: [
@@ -85,6 +111,55 @@ describe('UserController', () => {
             expect(mockUserService.findOne).toHaveBeenCalled();
             expect(mockUserService.findOne).toHaveBeenCalledWith(testUser);
             expect(result).toStrictEqual(testUser);
+
+        });
+    });
+
+    describe('register', () => {
+        it('should register a user', async () => {
+            (isUser as jest.Mock).mockReturnValue(false);
+            (generateToken as jest.Mock).mockReturnValue('mocked-token');
+            jest.spyOn(service, 'create').mockResolvedValue(testUser);
+
+            const result = await controller.register(testRegister,response);
+
+            expect(result).toStrictEqual(testUser);
+        });
+        it('should not register a user', async () => {
+            (isUser as jest.Mock).mockReturnValue(true);
+            (generateToken as jest.Mock).mockReturnValue('mocked-token');
+
+            await expect(controller.register(testRegister, response)).rejects.toBeInstanceOf(HttpException);
+            await expect(controller.register(testRegister, response)).rejects.toThrow('User already exists');
+
+        });
+    });
+
+    describe('login', () => {
+        it('should login a user', async () => {
+            (isUser as jest.Mock).mockReturnValue(true);
+            (bcrypt.compareSync as jest.Mock).mockReturnValue(true);
+            (generateToken as jest.Mock).mockReturnValue('mocked-token');
+
+            jest.spyOn(service, 'findOne').mockResolvedValue(testUser);
+
+            const result = await controller.login(testLogin,response);
+
+            expect(result).toStrictEqual(testUser);
+        });
+        it('should not login, password mismatch', async () => {
+            jest.spyOn(service, 'findOne').mockResolvedValue(testUser);
+            (isUser as jest.Mock).mockReturnValue(true);
+            (bcrypt.compareSync as jest.Mock).mockReturnValue(false);
+
+            await expect(controller.login(testLogin, response)).rejects.toBeInstanceOf(HttpException);
+            await expect(controller.login(testLogin, response)).rejects.toThrow('Password doesn\'t match');
+        });
+        it('should not login a user', async () => {
+            (isUser as jest.Mock).mockReturnValue(false);
+
+            await expect(controller.login(testLogin, response)).rejects.toBeInstanceOf(HttpException);
+            await expect(controller.login(testLogin, response)).rejects.toThrow('User doesn\'t exists');
 
         });
     });

@@ -26,19 +26,18 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  async findOne(criteria: Partial<User>): Promise<User> {
+  async findOne(criteria: Partial<User>): Promise<User | null> {
     const user = await this.userRepository.findOneBy(criteria);
-    if (!user) {
-      throw new BadRequestException('UserService.findOne User not found');
-    }
+    if (!user) return null;
+    
     return user;
   }
 
   async create(user: UserRegister): Promise<User> {
-    await this.findOne(user);
-    
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
       const createdUser: User = await this.userRepository.create(user);
 
@@ -61,8 +60,6 @@ export class UserService {
   }
 
   async update(id: number, user: User): Promise<User> {
-    await this.findOne(user);
-    
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -82,8 +79,9 @@ export class UserService {
     }
   }
 
-  async remove(id: number): Promise<void> {
-    const user = await this.findOne({ id });
+  async remove(criteria: Partial<User>): Promise<void> {
+    const user = await this.findOne(criteria );
+    if (!user) throw new BadRequestException('User not found');
 
     const queryRunner = this.dataSource.createQueryRunner();
 
