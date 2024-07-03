@@ -1,8 +1,5 @@
 import { User } from '../user/user.entity';
 import { DataSource } from 'typeorm';
-import {config} from 'dotenv';
-
-config();
 
 const {
   DB_HOST,
