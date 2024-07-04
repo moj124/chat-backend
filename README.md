@@ -85,6 +85,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+<<<<<<< HEAD
 ## TypeORM Migrations
 
 ### Generate migration file
@@ -102,5 +103,17 @@ npx typeorm-ts-node-commonjs migration:run -d ./src/database/dataSource.ts
 npx typeorm-ts-node-commonjs migration:revert -d ./src/database/dataSource.ts
 ```
 
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+=======
+>>>>>>> cf56098 (Update README.md)
 ## License
   Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
