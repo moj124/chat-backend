@@ -26,7 +26,7 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript Chat Backend application.
 
-##Endpoints
+## Endpoints
 ### GET user/
 Description: 
 - Get all users.
