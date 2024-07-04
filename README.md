@@ -103,4 +103,4 @@ npx typeorm-ts-node-commonjs migration:revert -d ./src/database/dataSource.ts
 ```
 
 ## License
-  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+  [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
