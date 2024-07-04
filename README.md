@@ -85,7 +85,6 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-<<<<<<< HEAD
 ## TypeORM Migrations
 
 ### Generate migration file
@@ -102,7 +101,5 @@ npx typeorm-ts-node-commonjs migration:run -d ./src/database/dataSource.ts
 ```
 npx typeorm-ts-node-commonjs migration:revert -d ./src/database/dataSource.ts
 ```
-=======
->>>>>>> cf56098 (Update README.md)
 ## License
   [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
