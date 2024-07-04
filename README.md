@@ -26,6 +26,33 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript Chat Backend application.
 
+##Endpoints
+### GET user/
+Description: 
+- Get all users.
+
+### GET user/:id
+Description: 
+- Get user by ID in parameters.
+
+### POST user/register 
+Description: 
+- Create a user with a given body.
+
+Body:
+- {username: string, password: string,firstName: string,lastName: string}
+
+### POST user/:id/remove
+Description:
+- Delete the specified :id user from the Database.
+
+### POST user/login
+Description:
+- Add JWT token to cookie and return user upon successful authentication with body.
+
+Body:
+- {username: string, password: string}
+
 ## Installation
 
 ```bash
@@ -58,16 +85,5 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
 ## License
-
-  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+  [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
