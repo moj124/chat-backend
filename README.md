@@ -85,7 +85,6 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-<<<<<<< HEAD
 ## TypeORM Migrations
 
 ### Generate migration file
