@@ -11,7 +11,7 @@ install:
 .PHONY: install
 
 build:
-	${DOCKER_COMPOSE} build
+	${DOCKER_COMPOSE} build --no-cache
 .PHONY: build
 
 # update dependencies

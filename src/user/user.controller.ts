@@ -2,7 +2,6 @@
   Controller,
   Post, 
   Body,
-  UseGuards,
   Param,
   Get,
   HttpException,
@@ -66,7 +65,7 @@ export class UserController {
 
   @Post('/login')
   async login(@Body() {username, password}: UserLogin, @Res({passthrough: true}) response: Response) {
-    try{
+    try {
       const checkUser = await this.userService.findOne({username});
 
       if (!isUser(checkUser)) throw new BadRequestException('User doesn\'t exists');
@@ -76,6 +75,17 @@ export class UserController {
       setCookieJWT(response,token);
 
       return checkUser;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/logout')
+  async logout(@Res({passthrough: true}) response: Response) {
+    try {
+      response.cookie("jwt", "", { maxAge: 0 });
+
+      return "Logged out successfully";
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

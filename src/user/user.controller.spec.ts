@@ -17,6 +17,7 @@ const mockUserService = {
     remove: jest.fn(),
 };
 
+jest.mock('express');
 jest.mock('bcrypt');
 jest.mock('../utils/isUser');
 jest.mock('../utils/generateToken');
@@ -132,6 +133,12 @@ describe('UserController', () => {
             await expect(controller.register(testRegister, response)).rejects.toBeInstanceOf(HttpException);
             await expect(controller.register(testRegister, response)).rejects.toThrow('User already exists');
 
+        });
+    });
+
+    describe('logout', () => {
+        it('should logout a user', async () => {
+            await controller.logout(response);
         });
     });
 
