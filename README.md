@@ -77,3 +77,4 @@ npx typeorm-ts-node-commonjs migration:revert -d ./src/database/dataSource.ts
 
 ## License
   [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
