@@ -27,26 +27,26 @@
 [Nest](https://github.com/nestjs/nest) framework TypeScript Chat Backend application.
 
 ## Endpoints
-### GET user/
+### GET users/
 Description: 
 - Get all users.
 
-### GET user/:id
+### GET users/:id
 Description: 
 - Get user by ID in parameters.
 
-### POST user/register 
+### POST users/register 
 Description: 
 - Create a user with a given body.
 
 Body:
 - {username: string, password: string,firstName: string,lastName: string}
 
-### POST user/:id/remove
+### POST users/remove/:id
 Description:
 - Delete the specified :id user from the Database.
 
-### POST user/login
+### POST users/login
 Description:
 - Add JWT token to cookie and return user upon successful authentication with body.
 

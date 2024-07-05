@@ -15,13 +15,13 @@ import { compareSync } from 'bcrypt';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 
-import { UserRegister, UserLogin }from '../utils/types';
+import { UserRegister, UserLogin }from './user.dto';
 import isUser from '../utils/isUser';
 import generateToken from '../utils/generateToken';
 import hashPasswordUser  from '../utils/hashPasswordUser';
 import setCookieJWT from '../utils/setCookieJWT';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -35,12 +35,12 @@ export class UserController {
     return await this.userService.findOne(user);
   }
 
-  @Post('/:id/update')
+  @Post('/update/:id')
   async update(@Param() param: any, user: User) {
     return await this.userService.update(param.id, user);
   }
 
-  @Post('/:id/remove')
+  @Post('/remove/:id')
   async remove(@Param() user: User) {
     return await this.userService.remove(user);
   }

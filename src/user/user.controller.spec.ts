@@ -3,7 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { BadRequestException, HttpException } from '@nestjs/common';
-import { UserLogin, UserRegister } from '../utils/types';
+import { UserLogin, UserRegister } from './user.dto';
 import isUser from '../utils/isUser';
 import { response } from 'express';
 import generateToken from '../utils/generateToken';

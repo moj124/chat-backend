@@ -55,6 +55,19 @@ fabric.properties
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Ignore Dockerfiles
+Dockerfile
+Dockerfile.*
+
+# Ignore other common files and directories
+*.md
+.dockerignore
+
+# Ignore Git files
+.git
+.github/
+.gitignore
+
 # User-specific files
 *.suo
 *.user

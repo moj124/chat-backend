@@ -9,7 +9,7 @@ import {
 import { User } from './user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { UserRegister } from '../utils/types';
+import { UserRegister } from './user.dto';
 
 @Injectable()
 export class UserService {

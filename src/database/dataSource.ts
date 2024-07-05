@@ -13,14 +13,13 @@ const {
     DB_PASSWORD,
   } = process.env;
   
-  
-  export const dataSource = new DataSource({
-    type: 'postgres',
-    host: DB_HOST,
-    port: parseInt(DB_PORT,10),
-    username: DB_USER,
-    password: DB_PASSWORD,
-    synchronize: true,
-    entities: [User, Message, Conversation],
-    migrations: ['./src/database/migrations/*.ts'],
-  });
+const dataSource = new DataSource({
+  type: 'postgres',
+  host: DB_HOST,
+  port: parseInt(DB_PORT,10),
+  username: DB_USER,
+  password: DB_PASSWORD,
+  synchronize: true,
+  entities: [User, Message, Conversation],
+});
+export default dataSource;

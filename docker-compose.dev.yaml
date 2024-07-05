@@ -8,9 +8,9 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
-      interval: 10s
+      interval: 15s
       timeout: 1s
-      retries: 5
+      retries: 3
     volumes:
       - db-data:/var/lib/postgresql/data # Persist database data
     ports:
