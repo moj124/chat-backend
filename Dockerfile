@@ -17,10 +17,10 @@ COPY --link package-lock.json package.json ./
 FROM base AS development
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
-RUN npm install --include=dev
+RUN npm i --include=dev
 COPY --link . .
 EXPOSE 3000
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]
 
 FROM base AS build
 RUN npm ci 

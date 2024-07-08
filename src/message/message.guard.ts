@@ -6,6 +6,10 @@ import { UserService } from '../user/user.service';
 import { verify } from 'jsonwebtoken';
 import { User } from '../user/user.entity';
 
+interface RequestUser extends Request {
+  user?: User;
+}
+
 @Injectable()
 export class MessageGuard implements CanActivate {
   constructor(
@@ -24,21 +28,23 @@ export class MessageGuard implements CanActivate {
     return true;
   }
 
-  async validateJWTToken( request : Request): Promise<boolean> {
+  async validateJWTToken( request : RequestUser): Promise<boolean> {
     try {
-      const cookie = request.cookies['jwt'] || null;
+      const cookie: string= request.cookies?.['jwt'];
 
       if (!cookie) throw new NotFoundException('No token provided');
   
       const decoded = verify(cookie, process.env.JWT_SECRET);
   
-      if (!decoded) throw new BadRequestException('Unauthorized - Invalid Token');
+      if (typeof decoded === 'string') throw new BadRequestException('Unauthorized - Invalid Token');
   
-      const user = await this.userService.findOne({ id:decoded?.id as number });
+      if (!decoded?.id) throw new BadRequestException('User object not found');
+
+      const user: User = await this.userService.findOne({ id:decoded.id });
   
       if (!user) throw new NotFoundException('User not found');
   
-      request.[user] = user;
+      request.user = user;
       return true;
     } catch (error) {
       throw error;

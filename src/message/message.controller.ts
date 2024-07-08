@@ -6,14 +6,17 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { MessageRegister } from './message.dto';
 import isMessage from '../utils/isMessage';
+import { MessageGuard } from './message.guard';
   
   @Controller('messages')
+  @UseGuards(MessageGuard)
   export class MessageController {
     constructor(private readonly messageService: MessageService) {}
   

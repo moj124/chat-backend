@@ -4,8 +4,17 @@ import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { HttpException } from '@nestjs/common';
 import isMessage from '../utils/isMessage';
+import { UserService } from '../user/user.service';
 
 const mockMessageService = {
+    create: jest.fn(),
+    findOne: jest.fn(),
+    findAll: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+};
+
+const mockUserService = {
     create: jest.fn(),
     findOne: jest.fn(),
     findAll: jest.fn(),
@@ -37,6 +46,10 @@ describe('MessageController', () => {
                 {
                     provide: MessageService,
                     useValue: mockMessageService,
+                },
+                {
+                    provide: UserService,
+                    useValue: mockUserService,
                 }
             ],
         }).compile();
