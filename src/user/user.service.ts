@@ -1,10 +1,8 @@
-import { 
+import {
   BadRequestException,
-  ConflictException,
-  Injectable, 
+  Injectable,
   InternalServerErrorException,
-  Logger, 
-  NotFoundException
+  Logger,
 } from '@nestjs/common';
 import { User } from './user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -29,7 +27,7 @@ export class UserService {
   async findOne(criteria: Partial<User>): Promise<User | null> {
     const user = await this.userRepository.findOneBy(criteria);
     if (!user) return null;
-    
+
     return user;
   }
 
@@ -52,9 +50,8 @@ export class UserService {
 
       throw new InternalServerErrorException(
         'Something went wrong, Try again!',
-      )
-    }
-    finally {
+      );
+    } finally {
       await queryRunner.release();
     }
   }
@@ -80,7 +77,7 @@ export class UserService {
   }
 
   async remove(criteria: Partial<User>): Promise<void> {
-    const user = await this.findOne(criteria );
+    const user = await this.findOne(criteria);
     if (!user) throw new BadRequestException('User not found');
 
     const queryRunner = this.dataSource.createQueryRunner();

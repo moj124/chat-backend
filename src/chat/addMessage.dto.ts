@@ -1,7 +1,7 @@
 export class AddMessageDto {
-    id: number;
+  id: number;
 
-    userId: number;
+  userId: number;
 
-    body: Object;
+  body: object;
 }

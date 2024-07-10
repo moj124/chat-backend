@@ -13,7 +13,7 @@ import { AuthModule } from './auth/auth.module';
     ChatModule,
     MessageModule,
     ConversationModule,
-    AuthModule
+    AuthModule,
   ],
 })
 export class AppModule {}

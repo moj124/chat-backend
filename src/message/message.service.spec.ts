@@ -6,129 +6,126 @@ import { DataSource } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 
 describe('MessageController', () => {
-    let service: MessageService;
+  let service: MessageService;
 
-    const mockMessageRepository = {
-        find: jest.fn(),
-        findOneBy: jest.fn(),
-        create: jest.fn()
-    }
+  const mockMessageRepository = {
+    find: jest.fn(),
+    findOneBy: jest.fn(),
+    create: jest.fn(),
+  };
 
-    const mockQueryRunner = {
-        manager: {
-          delete: jest.fn(),
-          save: jest.fn(),
+  const mockQueryRunner = {
+    manager: {
+      delete: jest.fn(),
+      save: jest.fn(),
+    },
+    connect: jest.fn(),
+    release: jest.fn(),
+    startTransaction: jest.fn(),
+    rollbackTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+  };
+
+  const testMessage = {
+    id: 1,
+    message: 'Hello',
+    senderId: 1,
+    receiverId: 2,
+    lastName: 'last',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+  } as Message;
+
+  beforeEach(async () => {
+    const mockDataSource = {
+      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+    };
+
+    const testModule: TestingModule = await Test.createTestingModule({
+      providers: [
+        MessageService,
+        {
+          provide: getRepositoryToken(Message),
+          useValue: mockMessageRepository,
         },
-        connect: jest.fn(),
-        release: jest.fn(),
-        startTransaction: jest.fn(),
-        rollbackTransaction: jest.fn(),
-        commitTransaction: jest.fn()
-      };
+        {
+          provide: DataSource,
+          useValue: mockDataSource,
+        },
+      ],
+    }).compile();
 
-    const testMessage = {
-        id: 1,
-        message: "Hello",
-        senderId: 1,
-        receiverId: 2,
-        lastName: "last",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deleteAt: null
-    } as Message;
+    service = testModule.get<MessageService>(MessageService);
+  });
 
-    beforeEach(async () => {
-        const mockDataSource = {
-            createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner)
-        }
+  describe('findAll', () => {
+    it('should return an array of messages', async () => {
+      mockMessageRepository.find.mockResolvedValueOnce([testMessage]);
 
-        const testModule: TestingModule = await Test.createTestingModule({
-            providers: [
-                MessageService,
-                {
-                    provide: getRepositoryToken(Message),
-                    useValue: mockMessageRepository,
-                },
-                {
-                    provide: DataSource,
-                    useValue: mockDataSource,
-                },
-            ],
-        }).compile();
-
-        service = testModule.get<MessageService>(MessageService);
-    });
-    
-    describe('findAll', () => {
-        it('should return an array of messages', async () => {
-            mockMessageRepository.find.mockResolvedValueOnce([testMessage]);
-
-            const messages: Message[] = await service.findAll();
-            expect(messages).toEqual([testMessage]);
-
-        });
-
-        it('should return an empty array', async () => {
-            mockMessageRepository.find.mockResolvedValueOnce([]);
-
-
-            const result = await service.findAll();
-
-            expect(result).toStrictEqual([]);
-        });
+      const messages: Message[] = await service.findAll();
+      expect(messages).toEqual([testMessage]);
     });
 
-    describe('findOne', () => {
-        it('should return a single message', async () => {
-            mockMessageRepository.findOneBy.mockResolvedValueOnce(testMessage);
+    it('should return an empty array', async () => {
+      mockMessageRepository.find.mockResolvedValueOnce([]);
 
-            const serviceMessage = await service.findOne(testMessage);
-            expect(serviceMessage).toStrictEqual(testMessage);
+      const result = await service.findAll();
 
-        });
+      expect(result).toStrictEqual([]);
+    });
+  });
 
-        it('should be null', async () => {
-            const result = await service.findOne({ id: -1 });
-            expect(result).toBeNull();         
-        });
+  describe('findOne', () => {
+    it('should return a single message', async () => {
+      mockMessageRepository.findOneBy.mockResolvedValueOnce(testMessage);
+
+      const serviceMessage = await service.findOne(testMessage);
+      expect(serviceMessage).toStrictEqual(testMessage);
     });
 
-    describe('remove', () => {
-        it('should delete a message', async () => {
-            jest.spyOn(service, 'findOne').mockResolvedValueOnce(testMessage);
-            const removeSpy = mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
-            
-            await service.remove(testMessage);
+    it('should be null', async () => {
+      const result = await service.findOne({ id: -1 });
+      expect(result).toBeNull();
+    });
+  });
 
+  describe('remove', () => {
+    it('should delete a message', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testMessage);
+      const removeSpy =
+        mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
-            expect(removeSpy).toHaveBeenCalledTimes(1);
-            expect(removeSpy).toHaveBeenCalledWith(Message,testMessage);
-        });
+      await service.remove(testMessage);
 
-        it('should not delete a message', async () => {
-            mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
-
-            try {
-                await service.remove({id: -1});
-
-                fail('remove() should have thrown BadRequestException');
-              } catch (error) {
-                expect(error).toBeInstanceOf(BadRequestException);
-                expect(error.message).toBe("Message not found");
-              }
-        });
+      expect(removeSpy).toHaveBeenCalledTimes(1);
+      expect(removeSpy).toHaveBeenCalledWith(Message, testMessage);
     });
 
-    
-    describe('create', () => {
-        it('should create a message', async () => {
-            mockMessageRepository.create.mockResolvedValueOnce(testMessage);
-            const createSpy = mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+    it('should not delete a message', async () => {
+      mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
-            await service.create(testMessage);
+      try {
+        await service.remove({ id: -1 });
 
-            expect(createSpy).toHaveBeenCalled();
-            expect(createSpy).toHaveBeenCalledWith(testMessage);
-        });
+        fail('remove() should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('Message not found');
+      }
     });
+  });
+
+  describe('create', () => {
+    it('should create a message', async () => {
+      mockMessageRepository.create.mockResolvedValueOnce(testMessage);
+      const createSpy =
+        mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+
+      await service.create(testMessage);
+
+      expect(createSpy).toHaveBeenCalled();
+      expect(createSpy).toHaveBeenCalledWith(testMessage);
+    });
+  });
 });

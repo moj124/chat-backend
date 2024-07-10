@@ -6,125 +6,122 @@ import { DataSource } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 
 describe('UserController', () => {
-    let service: UserService;
+  let service: UserService;
 
-    const mockUserRepository = {
-        find: jest.fn(),
-        findOneBy: jest.fn(),
-        create: jest.fn()
-    }
+  const mockUserRepository = {
+    find: jest.fn(),
+    findOneBy: jest.fn(),
+    create: jest.fn(),
+  };
 
-    const mockQueryRunner = {
-        manager: {
-          delete: jest.fn(),
-          save: jest.fn(),
+  const mockQueryRunner = {
+    manager: {
+      delete: jest.fn(),
+      save: jest.fn(),
+    },
+    connect: jest.fn(),
+    release: jest.fn(),
+    startTransaction: jest.fn(),
+    rollbackTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+  };
+
+  const testUser = {
+    username: 'root1',
+    password: 'root',
+    firstName: 'first',
+    lastName: 'last',
+  } as User;
+
+  beforeEach(async () => {
+    const mockDataSource = {
+      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+    };
+
+    const testModule: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUserRepository,
         },
-        connect: jest.fn(),
-        release: jest.fn(),
-        startTransaction: jest.fn(),
-        rollbackTransaction: jest.fn(),
-        commitTransaction: jest.fn()
-      };
+        {
+          provide: DataSource,
+          useValue: mockDataSource,
+        },
+      ],
+    }).compile();
 
-    const testUser = {
-        username: "root1",
-        password: "root",
-        firstName: "first",
-        lastName: "last",
-    } as User;
+    service = testModule.get<UserService>(UserService);
+  });
 
-    beforeEach(async () => {
-        const mockDataSource = {
-            createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner)
-        }
+  describe('findAll', () => {
+    it('should return an array of users', async () => {
+      mockUserRepository.find.mockResolvedValueOnce([testUser]);
 
-        const testModule: TestingModule = await Test.createTestingModule({
-            providers: [
-                UserService,
-                {
-                    provide: getRepositoryToken(User),
-                    useValue: mockUserRepository,
-                },
-                {
-                    provide: DataSource,
-                    useValue: mockDataSource,
-                },
-            ],
-        }).compile();
-
-        service = testModule.get<UserService>(UserService);
-    });
-    
-    describe('findAll', () => {
-        it('should return an array of users', async () => {
-            mockUserRepository.find.mockResolvedValueOnce([testUser]);
-
-            const users: User[] = await service.findAll();
-            expect(users).toEqual([testUser]);
-
-        });
-
-        it('should return an empty array', async () => {
-            mockUserRepository.find.mockResolvedValueOnce([]);
-
-
-            const result = await service.findAll();
-
-            expect(result).toStrictEqual([]);
-        });
+      const users: User[] = await service.findAll();
+      expect(users).toEqual([testUser]);
     });
 
-    describe('findOne', () => {
-        it('should return a single user', async () => {
-            mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
+    it('should return an empty array', async () => {
+      mockUserRepository.find.mockResolvedValueOnce([]);
 
-            const serviceUser = await service.findOne(testUser);
-            expect(serviceUser).toStrictEqual(testUser);
+      const result = await service.findAll();
 
-        });
+      expect(result).toStrictEqual([]);
+    });
+  });
 
-        it('should be null', async () => {
-            const result = await service.findOne({ id: -1 });
-            expect(result).toBeNull();         
-        });
+  describe('findOne', () => {
+    it('should return a single user', async () => {
+      mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
+
+      const serviceUser = await service.findOne(testUser);
+      expect(serviceUser).toStrictEqual(testUser);
     });
 
-    describe('remove', () => {
-        it('should delete a user', async () => {
-            jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
-            const removeSpy = mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
-            
-            await service.remove(testUser);
+    it('should be null', async () => {
+      const result = await service.findOne({ id: -1 });
+      expect(result).toBeNull();
+    });
+  });
 
+  describe('remove', () => {
+    it('should delete a user', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
+      const removeSpy =
+        mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
-            expect(removeSpy).toHaveBeenCalledTimes(1);
-            expect(removeSpy).toHaveBeenCalledWith(User,testUser);
-        });
+      await service.remove(testUser);
 
-        it('should not delete a user', async () => {
-            mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
-
-            try {
-                await service.remove({id: -1});
-
-                fail('remove() should have thrown BadRequestException');
-              } catch (error) {
-                expect(error).toBeInstanceOf(BadRequestException);
-                expect(error.message).toBe("User not found");
-              }
-        });
+      expect(removeSpy).toHaveBeenCalledTimes(1);
+      expect(removeSpy).toHaveBeenCalledWith(User, testUser);
     });
 
-    
-    describe('create', () => {
-        it('should create a user', async () => {
-            mockUserRepository.create.mockResolvedValueOnce(testUser);
-            const createSpy = mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+    it('should not delete a user', async () => {
+      mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
-            await service.create(testUser);
+      try {
+        await service.remove({ id: -1 });
 
-            expect(createSpy).toHaveBeenCalled();
-            expect(createSpy).toHaveBeenCalledWith(testUser);
-        });
+        fail('remove() should have thrown BadRequestException');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error.message).toBe('User not found');
+      }
     });
+  });
+
+  describe('create', () => {
+    it('should create a user', async () => {
+      mockUserRepository.create.mockResolvedValueOnce(testUser);
+      const createSpy =
+        mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+
+      await service.create(testUser);
+
+      expect(createSpy).toHaveBeenCalled();
+      expect(createSpy).toHaveBeenCalledWith(testUser);
+    });
+  });
 });

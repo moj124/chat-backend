@@ -40,6 +40,10 @@ test:
 	npm run test:watch
 .PHONY: test
 
+lint:
+	npm run lint
+.PHONY: lint
+
 exec:
 	${DOCKER_EXEC} api /bin/bash
 .PHONY: exec
