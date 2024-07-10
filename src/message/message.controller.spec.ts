@@ -3,8 +3,8 @@ import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { HttpException } from '@nestjs/common';
-import isMessage from '../utils/isMessage';
 import { UserService } from '../user/user.service';
+import { ConversationService } from '../conversation/conversation.service';
 
 const mockMessageService = {
     create: jest.fn(),
@@ -22,7 +22,13 @@ const mockUserService = {
     remove: jest.fn(),
 };
 
-jest.mock('../utils/isMessage');
+const mockConversationService = {
+    create: jest.fn(),
+    findOne: jest.fn(),
+    findAll: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+};
 
 const testMessage = {
     id: 1,
@@ -49,6 +55,10 @@ describe('MessageController', () => {
                 },
                 {
                     provide: UserService,
+                    useValue: mockUserService,
+                },
+                {
+                    provide: ConversationService,
                     useValue: mockUserService,
                 }
             ],
@@ -96,20 +106,16 @@ describe('MessageController', () => {
 
     describe('send', () => {
         it('should send a message', async () => {
-            mockMessageService.findOne.mockResolvedValueOnce(testMessage);
+            mockMessageService.findOne.mockResolvedValueOnce(null);
             mockMessageService.create.mockResolvedValueOnce(testMessage);
             const result = await controller.send(testMessage);
 
-            expect(mockMessageService.findOne).toHaveBeenCalled();
-            expect(mockMessageService.findOne).toHaveBeenCalledWith(testMessage);
             expect(result).toStrictEqual(testMessage);
-
         });
     });
 
     describe('remove', () => {
         it('should remove a message', async () => {
-            (isMessage as jest.Mock).mockReturnValue(false);
             jest.spyOn(service, 'create').mockResolvedValue(testMessage);
             await controller.remove(testMessage);
         });

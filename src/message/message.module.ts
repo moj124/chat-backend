@@ -4,11 +4,11 @@ import { Message } from "./message.entity";
 import { MessageController } from "./message.controller";
 import { MessageService } from "./message.service";
 import { UserModule } from "../user/user.module";
-import { MessageGuard } from "./message.guard";
+import { ConversationModule } from "../conversation/conversation.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Message]), UserModule],
-    providers: [MessageService, MessageGuard],
+    imports: [TypeOrmModule.forFeature([Message]), UserModule, ConversationModule],
+    providers: [MessageService],
     controllers: [MessageController],
 })
 export class MessageModule {}

@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config
 
 # Install node modules
 COPY --link package-lock.json package.json ./
@@ -18,9 +18,8 @@ FROM base AS development
 ARG NODE_ENV=development
 ENV NODE_ENV=${NODE_ENV}
 RUN npm i --include=dev
-COPY --link . .
+COPY  --link . .
 EXPOSE 3000
-CMD ["npm", "run", "start:dev"]
 
 FROM base AS build
 RUN npm ci 

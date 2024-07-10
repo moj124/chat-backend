@@ -36,7 +36,13 @@ services:
       - /app/node_modules
     ports:
       - 3000:3000
-    command: ["npm", "run", "start:dev"]
-
+    command: npm run start:dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
 volumes:
   db-data: # Define a named volume for PostgreSQL data persistence

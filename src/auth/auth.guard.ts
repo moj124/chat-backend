@@ -1,6 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Message } from './message.entity';
 import { Request } from 'express';
 import { UserService } from '../user/user.service';
 import { verify } from 'jsonwebtoken';
@@ -11,7 +10,7 @@ interface RequestUser extends Request {
 }
 
 @Injectable()
-export class MessageGuard implements CanActivate {
+export class AuthGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
   ) {}
@@ -20,7 +19,7 @@ export class MessageGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const message: Message = request.body;
+    const message = request.body;
 
     if (!this.validateJWTToken(request)) {
       return false;
@@ -29,25 +28,19 @@ export class MessageGuard implements CanActivate {
   }
 
   async validateJWTToken( request : RequestUser): Promise<boolean> {
-    try {
       const cookie: string= request.cookies?.['jwt'];
 
-      if (!cookie) throw new NotFoundException('No token provided');
+      if (!cookie) return false;
   
       const decoded = verify(cookie, process.env.JWT_SECRET);
   
-      if (typeof decoded === 'string') throw new BadRequestException('Unauthorized - Invalid Token');
-  
-      if (!decoded?.id) throw new BadRequestException('User object not found');
+      if (typeof decoded === 'string' || !decoded?.id) return false;
 
       const user: User = await this.userService.findOne({ id:decoded.id });
   
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) return false;
   
       request.user = user;
       return true;
-    } catch (error) {
-      throw error;
-    }
   }  
 }
