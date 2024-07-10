@@ -20,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: production
+      target: development
     restart: always
     depends_on:
       - db
@@ -29,13 +29,20 @@ services:
       DB_PORT: 5432
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
-      NODE_ENV: production
+      NODE_ENV: development
     working_dir: /app
     volumes:
       - .:/app
       - /app/node_modules
     ports:
       - 3000:3000
-
+    command: npm run start:dev
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
 volumes:
   db-data: # Define a named volume for PostgreSQL data persistence

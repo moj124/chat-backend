@@ -24,7 +24,34 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) framework TypeScript Chat Backend application.
+
+## Endpoints
+### GET users/
+Description: 
+- Get all users.
+
+### GET users/:id
+Description: 
+- Get user by ID in parameters.
+
+### POST users/register 
+Description: 
+- Create a user with a given body.
+
+Body:
+- {username: string, password: string,firstName: string,lastName: string}
+
+### POST users/remove/:id
+Description:
+- Delete the specified :id user from the Database.
+
+### POST users/login
+Description:
+- Add JWT token to cookie and return user upon successful authentication with body.
+
+Body:
+- {username: string, password: string}
 
 ## Installation
 
@@ -58,16 +85,21 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## TypeORM Migrations
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Generate migration file
+```
+npx typeorm-ts-node-commonjs migration:generate ./src/database/migrations/nameDescription -d ./src/database/dataSource.ts
+```
 
-## Stay in touch
+### Run migration
+```
+npx typeorm-ts-node-commonjs migration:run -d ./src/database/dataSource.ts
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
+### Revert migration
+```
+npx typeorm-ts-node-commonjs migration:revert -d ./src/database/dataSource.ts
+```
 ## License
-
-  Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+  [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

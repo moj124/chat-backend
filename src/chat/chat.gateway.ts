@@ -20,7 +20,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('chat')
   handleMessage(@MessageBody() payload: AddMessageDto): AddMessageDto {
-    this.logger.log(`Message received: ${payload.id} - ${payload.userId} - ${payload.body}`);
+    this.logger.log(
+      `Message received: ${payload.id} - ${payload.userId} - ${payload.body}`,
+    );
     this.server.emit('chat', payload);
     return payload;
   }

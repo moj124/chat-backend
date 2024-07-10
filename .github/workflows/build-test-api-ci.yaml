@@ -4,29 +4,33 @@ on:
   push:
     branches:
       - '**'
-  pull_request:
-    branches:
-      - '**'
 
 
 jobs:
-  build:
+  build-dev:
     runs-on: ubuntu-latest
 
     steps:
       - 
         name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - 
         name: Setup Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
 
       - 
         name: Install cleanly dependencies
         run: npm ci
+
+      - 
+        name: Run eslint on changed files
+        uses: tj-actions/eslint-changed-files@v25
+        with:
+          config_path: "../eslint.config.mjs"
+          extra_args: "--max-warnings=0"
 
       - 
         name: Run tests
@@ -49,5 +53,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          target: production
           push: true
           tags: moj124/chat-api:latest

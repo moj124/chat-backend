@@ -8,21 +8,15 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class User {
+export class Conversation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
-  username: string;
+  @Column('simple-array')
+  participants: number[];
 
-  @Column()
-  password: string;
-
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
+  @Column('simple-array')
+  messages: number[];
 
   @CreateDateColumn()
   createdAt: Date;

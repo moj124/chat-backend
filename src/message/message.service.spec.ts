@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserService } from './user.service';
-import { User } from './user.entity';
+import { MessageService } from './message.service';
+import { Message } from './message.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { BadRequestException } from '@nestjs/common';
 
-describe('UserController', () => {
-  let service: UserService;
+describe('MessageController', () => {
+  let service: MessageService;
 
-  const mockUserRepository = {
+  const mockMessageRepository = {
     find: jest.fn(),
     findOneBy: jest.fn(),
     create: jest.fn(),
@@ -26,12 +26,16 @@ describe('UserController', () => {
     commitTransaction: jest.fn(),
   };
 
-  const testUser = {
-    username: 'root1',
-    password: 'root',
-    firstName: 'first',
+  const testMessage = {
+    id: 1,
+    message: 'Hello',
+    senderId: 1,
+    receiverId: 2,
     lastName: 'last',
-  } as User;
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deleteAt: null,
+  } as Message;
 
   beforeEach(async () => {
     const mockDataSource = {
@@ -40,10 +44,10 @@ describe('UserController', () => {
 
     const testModule: TestingModule = await Test.createTestingModule({
       providers: [
-        UserService,
+        MessageService,
         {
-          provide: getRepositoryToken(User),
-          useValue: mockUserRepository,
+          provide: getRepositoryToken(Message),
+          useValue: mockMessageRepository,
         },
         {
           provide: DataSource,
@@ -52,19 +56,19 @@ describe('UserController', () => {
       ],
     }).compile();
 
-    service = testModule.get<UserService>(UserService);
+    service = testModule.get<MessageService>(MessageService);
   });
 
   describe('findAll', () => {
-    it('should return an array of users', async () => {
-      mockUserRepository.find.mockResolvedValueOnce([testUser]);
+    it('should return an array of messages', async () => {
+      mockMessageRepository.find.mockResolvedValueOnce([testMessage]);
 
-      const users: User[] = await service.findAll();
-      expect(users).toEqual([testUser]);
+      const messages: Message[] = await service.findAll();
+      expect(messages).toEqual([testMessage]);
     });
 
     it('should return an empty array', async () => {
-      mockUserRepository.find.mockResolvedValueOnce([]);
+      mockMessageRepository.find.mockResolvedValueOnce([]);
 
       const result = await service.findAll();
 
@@ -73,11 +77,11 @@ describe('UserController', () => {
   });
 
   describe('findOne', () => {
-    it('should return a single user', async () => {
-      mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
+    it('should return a single message', async () => {
+      mockMessageRepository.findOneBy.mockResolvedValueOnce(testMessage);
 
-      const serviceUser = await service.findOne(testUser);
-      expect(serviceUser).toStrictEqual(testUser);
+      const serviceMessage = await service.findOne(testMessage);
+      expect(serviceMessage).toStrictEqual(testMessage);
     });
 
     it('should be null', async () => {
@@ -87,18 +91,18 @@ describe('UserController', () => {
   });
 
   describe('remove', () => {
-    it('should delete a user', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
+    it('should delete a message', async () => {
+      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testMessage);
       const removeSpy =
         mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
-      await service.remove(testUser);
+      await service.remove(testMessage);
 
       expect(removeSpy).toHaveBeenCalledTimes(1);
-      expect(removeSpy).toHaveBeenCalledWith(User, testUser);
+      expect(removeSpy).toHaveBeenCalledWith(Message, testMessage);
     });
 
-    it('should not delete a user', async () => {
+    it('should not delete a message', async () => {
       mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
 
       try {
@@ -107,21 +111,21 @@ describe('UserController', () => {
         fail('remove() should have thrown BadRequestException');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.message).toBe('User not found');
+        expect(error.message).toBe('Message not found');
       }
     });
   });
 
   describe('create', () => {
-    it('should create a user', async () => {
-      mockUserRepository.create.mockResolvedValueOnce(testUser);
+    it('should create a message', async () => {
+      mockMessageRepository.create.mockResolvedValueOnce(testMessage);
       const createSpy =
         mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
 
-      await service.create(testUser);
+      await service.create(testMessage);
 
       expect(createSpy).toHaveBeenCalled();
-      expect(createSpy).toHaveBeenCalledWith(testUser);
+      expect(createSpy).toHaveBeenCalledWith(testMessage);
     });
   });
 });

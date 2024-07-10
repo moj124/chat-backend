@@ -1,5 +1,5 @@
 #Makefile variables, make code simplier
-COMPOSE_FILE ?= docker-compose.yml
+COMPOSE_FILE ?= docker-compose.dev.yaml
 DOCKER_COMPOSE ?= docker-compose -f ${COMPOSE_FILE}
 DOCKER_EXEC ?= docker-compose exec -it
 DOCKER_RUN ?= ${DOCKER_COMPOSE} run --rm --service-ports
@@ -25,7 +25,7 @@ down:
 
 # starts the images which runs in the an isolated environment
 up-all:
-	${DOCKER_COMPOSE} up -d
+	${DOCKER_COMPOSE} up -d --watch
 .PHONY: up-all
 
 start:
@@ -40,12 +40,15 @@ test:
 	npm run test:watch
 .PHONY: test
 
+lint:
+	npm run lint
+.PHONY: lint
+
 exec:
 	${DOCKER_EXEC} api /bin/bash
 .PHONY: exec
 # Useful aliases
 # -----------------------------------------------------------------------------------------------
 
-# first remove all docker containers if still running start up mailer, database images
 dev: down up-all
 .PHONY: dev

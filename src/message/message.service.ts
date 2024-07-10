@@ -4,45 +4,46 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { User } from './user.entity';
+import { Message } from './message.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { UserRegister } from './user.dto';
+import { MessageRegister } from './message.dto';
 
 @Injectable()
-export class UserService {
+export class MessageService {
   private logger = new Logger();
 
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Message)
+    private readonly messageRepository: Repository<Message>,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
 
-  async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+  async findAll(): Promise<Message[]> {
+    return await this.messageRepository.find();
   }
 
-  async findOne(criteria: Partial<User>): Promise<User | null> {
-    const user = await this.userRepository.findOneBy(criteria);
-    if (!user) return null;
+  async findOne(criteria: Partial<Message>): Promise<Message | null> {
+    const message = await this.messageRepository.findOneBy(criteria);
+    if (!message) return null;
 
-    return user;
+    return message;
   }
 
-  async create(user: UserRegister): Promise<User> {
+  async create(message: MessageRegister): Promise<Message> {
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const createdUser: User = await this.userRepository.create(user);
+      const createdMessage: Message =
+        await this.messageRepository.create(message);
 
-      await queryRunner.manager.save(createdUser);
+      await queryRunner.manager.save(createdMessage);
 
       await queryRunner.commitTransaction();
-      return createdUser;
+      return createdMessage;
     } catch (error) {
       this.logger.error(error.message, error.stack);
 
@@ -56,17 +57,17 @@ export class UserService {
     }
   }
 
-  async update(id: number, user: User): Promise<User> {
+  async update(id: number, message: Message): Promise<Message> {
     const queryRunner = this.dataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.manager.update(User, id, user);
+      await queryRunner.manager.update(Message, id, message);
 
       await queryRunner.commitTransaction();
-      return user;
+      return message;
     } catch (error) {
       await queryRunner.rollbackTransaction();
 
@@ -76,9 +77,9 @@ export class UserService {
     }
   }
 
-  async remove(criteria: Partial<User>): Promise<void> {
-    const user = await this.findOne(criteria);
-    if (!user) throw new BadRequestException('User not found');
+  async remove(criteria: Partial<Message>): Promise<void> {
+    const message = await this.findOne(criteria);
+    if (!message) throw new BadRequestException('Message not found');
 
     const queryRunner = this.dataSource.createQueryRunner();
 
@@ -86,7 +87,7 @@ export class UserService {
     await queryRunner.startTransaction();
 
     try {
-      await queryRunner.manager.delete(User, user);
+      await queryRunner.manager.delete(Message, message);
 
       await queryRunner.commitTransaction();
     } catch (error) {
