@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('MessageController', () => {
   let service: MessageService;
@@ -73,7 +73,7 @@ describe('MessageController', () => {
 
   describe('remove', () => {
     it('should delete a message', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testMessage);
+      mockMessageRepository.findOneBy.mockResolvedValueOnce(testMessage);
       const removeSpy =
        mockMessageRepository.delete.mockResolvedValueOnce(undefined);
 
@@ -89,9 +89,9 @@ describe('MessageController', () => {
       try {
         await service.remove({ id: -1 });
 
-        fail('remove() should have thrown BadRequestException');
+        fail('remove() should have thrown NotFoundException');
       } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Message not found');
       }
     });

@@ -40,10 +40,6 @@ test:
 	npm run test:watch
 .PHONY: test
 
-test-int:
-    npm run test:integration
-.PHONY: test-int
-
 lint:
 	npm run lint
 .PHONY: lint
@@ -56,6 +52,3 @@ exec:
 
 dev: down up-all
 .PHONY: dev
-
-test-integration: dev test-int
-.PHONY: test-integration

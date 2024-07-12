@@ -54,7 +54,7 @@ export class MessageService {
       this.logger.error(error.message, error.stack);
 
       throw new InternalServerErrorException(
-        'User doesn\'t exist',
+        'Message doesn\'t exist',
       );
     }
   }
@@ -64,7 +64,7 @@ export class MessageService {
       if (!criteria) throw new BadRequestException('Invalid message object');
 
       const message = await this.messageRepository.findOneBy(criteria);
-      if (!message) throw new NotFoundException('User not found');
+      if (!message) throw new NotFoundException('Message not found');
 
       await this.messageRepository.delete(message);
     } catch (error) {
