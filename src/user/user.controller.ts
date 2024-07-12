@@ -8,6 +8,7 @@ import {
   HttpStatus,
   BadRequestException,
   Res,
+  HttpCode,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { compareSync } from 'bcrypt';
@@ -35,13 +36,15 @@ export class UserController {
     return await this.userService.findOne(user);
   }
 
-  @Post('/update/:id')
-  async update(@Param('id') id: number, user: User) {
-    return await this.userService.update(id, user);
+  @Post('/update')
+  async update(@Body() user: User) {
+    return await this.userService.update(user);
   }
 
-  @Post('/remove/:id')
-  async remove(@Param() user: User) {
+  @Post('/remove')
+  @HttpCode(204)
+  async remove(@Body() user: User) {
+    console.log(user);
     return await this.userService.remove(user);
   }
 
@@ -90,6 +93,7 @@ export class UserController {
   }
 
   @Post('/logout')
+  @HttpCode(200)
   async logout(@Res({ passthrough: true }) response: Response) {
     try {
       response.cookie('jwt', '', { maxAge: 0 });
