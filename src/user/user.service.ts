@@ -3,10 +3,11 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { User } from './user.entity';
-import { DataSource, Repository } from 'typeorm';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { UserRegister } from './user.dto';
 
 @Injectable()
@@ -16,8 +17,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectDataSource()
-    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -32,69 +31,44 @@ export class UserService {
   }
 
   async create(user: UserRegister): Promise<User> {
-    const queryRunner = await this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
     try {
       const createdUser: User = await this.userRepository.create(user);
 
-      await queryRunner.manager.save(createdUser);
-
-      await queryRunner.commitTransaction();
-      return createdUser;
+      return await this.userRepository.save(createdUser);
     } catch (error) {
       this.logger.error(error.message, error.stack);
-
-      await queryRunner.rollbackTransaction();
 
       throw new InternalServerErrorException(
         'Something went wrong, Try again!',
       );
-    } finally {
-      await queryRunner.release();
     }
   }
 
-  async update(id: number, user: User): Promise<User> {
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
+  async update(user: User): Promise<User> {
     try {
-      await queryRunner.manager.update(User, id, user);
-
-      await queryRunner.commitTransaction();
+      await this.userRepository.update(user.id, user);
       return user;
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      this.logger.error(error.message, error.stack);
 
-      throw error;
-    } finally {
-      await queryRunner.release();
+      throw new InternalServerErrorException(
+        'User doesn\'t exist',
+      );
     }
   }
 
-  async remove(criteria: Partial<User>): Promise<void> {
-    const user = await this.findOne(criteria);
-    if (!user) throw new BadRequestException('User not found');
-
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
+  async remove(criteria: Partial<User>): Promise<void> {    
     try {
-      await queryRunner.manager.delete(User, user);
+      if (!criteria) throw new BadRequestException('Invalid user object');
 
-      await queryRunner.commitTransaction();
+      const user = await this.userRepository.findOneBy(criteria);
+      if (!user) throw new NotFoundException('User not found');
+
+      await this.userRepository.delete(user);
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      this.logger.error(error.message, error.stack);
 
       throw error;
-    } finally {
-      await queryRunner.release();
     }
   }
 }

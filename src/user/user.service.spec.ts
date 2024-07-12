@@ -2,8 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { User } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 describe('UserController', () => {
   let service: UserService;
@@ -12,18 +11,8 @@ describe('UserController', () => {
     find: jest.fn(),
     findOneBy: jest.fn(),
     create: jest.fn(),
-  };
-
-  const mockQueryRunner = {
-    manager: {
-      delete: jest.fn(),
-      save: jest.fn(),
-    },
-    connect: jest.fn(),
-    release: jest.fn(),
-    startTransaction: jest.fn(),
-    rollbackTransaction: jest.fn(),
-    commitTransaction: jest.fn(),
+    delete: jest.fn(),
+    save: jest.fn(),
   };
 
   const testUser = {
@@ -34,20 +23,12 @@ describe('UserController', () => {
   } as User;
 
   beforeEach(async () => {
-    const mockDataSource = {
-      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
-    };
-
     const testModule: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         {
           provide: getRepositoryToken(User),
           useValue: mockUserRepository,
-        },
-        {
-          provide: DataSource,
-          useValue: mockDataSource,
         },
       ],
     }).compile();
@@ -88,25 +69,25 @@ describe('UserController', () => {
 
   describe('remove', () => {
     it('should delete a user', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
+      mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
       const removeSpy =
-        mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
+      mockUserRepository.delete.mockResolvedValueOnce(undefined);
 
       await service.remove(testUser);
 
       expect(removeSpy).toHaveBeenCalledTimes(1);
-      expect(removeSpy).toHaveBeenCalledWith(User, testUser);
+      expect(removeSpy).toHaveBeenCalledWith(testUser);
     });
 
     it('should not delete a user', async () => {
-      mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
+      mockUserRepository.delete.mockResolvedValueOnce(undefined);
 
       try {
         await service.remove({ id: -1 });
 
-        fail('remove() should have thrown BadRequestException');
+        fail('remove() should have thrown NotFoundException');
       } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('User not found');
       }
     });
@@ -116,7 +97,7 @@ describe('UserController', () => {
     it('should create a user', async () => {
       mockUserRepository.create.mockResolvedValueOnce(testUser);
       const createSpy =
-        mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+      mockUserRepository.save.mockResolvedValueOnce(undefined);
 
       await service.create(testUser);
 

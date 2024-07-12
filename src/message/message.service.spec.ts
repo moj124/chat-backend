@@ -2,8 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { BadRequestException } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 describe('MessageController', () => {
   let service: MessageService;
@@ -12,18 +11,8 @@ describe('MessageController', () => {
     find: jest.fn(),
     findOneBy: jest.fn(),
     create: jest.fn(),
-  };
-
-  const mockQueryRunner = {
-    manager: {
-      delete: jest.fn(),
-      save: jest.fn(),
-    },
-    connect: jest.fn(),
-    release: jest.fn(),
-    startTransaction: jest.fn(),
-    rollbackTransaction: jest.fn(),
-    commitTransaction: jest.fn(),
+    save: jest.fn(),
+    delete: jest.fn()
   };
 
   const testMessage = {
@@ -38,20 +27,12 @@ describe('MessageController', () => {
   } as Message;
 
   beforeEach(async () => {
-    const mockDataSource = {
-      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
-    };
-
     const testModule: TestingModule = await Test.createTestingModule({
       providers: [
         MessageService,
         {
           provide: getRepositoryToken(Message),
           useValue: mockMessageRepository,
-        },
-        {
-          provide: DataSource,
-          useValue: mockDataSource,
         },
       ],
     }).compile();
@@ -92,25 +73,25 @@ describe('MessageController', () => {
 
   describe('remove', () => {
     it('should delete a message', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testMessage);
+      mockMessageRepository.findOneBy.mockResolvedValueOnce(testMessage);
       const removeSpy =
-        mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
+       mockMessageRepository.delete.mockResolvedValueOnce(undefined);
 
       await service.remove(testMessage);
 
       expect(removeSpy).toHaveBeenCalledTimes(1);
-      expect(removeSpy).toHaveBeenCalledWith(Message, testMessage);
+      expect(removeSpy).toHaveBeenCalledWith(testMessage);
     });
 
     it('should not delete a message', async () => {
-      mockQueryRunner.manager.delete.mockResolvedValueOnce(undefined);
+     mockMessageRepository.delete.mockResolvedValueOnce(undefined);
 
       try {
         await service.remove({ id: -1 });
 
-        fail('remove() should have thrown BadRequestException');
+        fail('remove() should have thrown NotFoundException');
       } catch (error) {
-        expect(error).toBeInstanceOf(BadRequestException);
+        expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Message not found');
       }
     });
@@ -120,7 +101,7 @@ describe('MessageController', () => {
     it('should create a message', async () => {
       mockMessageRepository.create.mockResolvedValueOnce(testMessage);
       const createSpy =
-        mockQueryRunner.manager.save.mockResolvedValueOnce(undefined);
+        mockMessageRepository.save.mockResolvedValueOnce(undefined);
 
       await service.create(testMessage);
 

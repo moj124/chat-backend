@@ -106,7 +106,7 @@ describe('UserController', () => {
     it('should update a user', async () => {
       mockUserService.findOne.mockResolvedValueOnce(testUser);
       mockUserService.update.mockResolvedValueOnce(testUser);
-      const result = await controller.update(1, testUser);
+      const result = await controller.update(testUser);
 
       expect(mockUserService.findOne).toHaveBeenCalled();
       expect(mockUserService.findOne).toHaveBeenCalledWith(testUser);

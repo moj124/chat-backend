@@ -15,7 +15,7 @@
             "type": "node-terminal",
             "name": "Integration tests",
             "request": "launch",
-            "command": "npm run test:integration:watch",
+            "command": "npm run test:integration",
             "cwd": "${fileDirname}"
            }
     ]
