@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { Message } from './message.entity';
 import { Repository } from 'typeorm';
@@ -50,17 +51,25 @@ export class MessageService {
 
       return message;
     } catch (error) {
-      throw error;
+      this.logger.error(error.message, error.stack);
+
+      throw new InternalServerErrorException(
+        'User doesn\'t exist',
+      );
     }
   }
 
   async remove(criteria: Partial<Message>): Promise<void> {
-    const message = await this.findOne(criteria);
-    if (!message) throw new BadRequestException('Message not found');
-
     try {
-      this.messageRepository.delete(message);
+      if (!criteria) throw new BadRequestException('Invalid message object');
+
+      const message = await this.messageRepository.findOneBy(criteria);
+      if (!message) throw new NotFoundException('User not found');
+
+      await this.messageRepository.delete(message);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
+
       throw error;
     }
   }

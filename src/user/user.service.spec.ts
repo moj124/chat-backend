@@ -69,7 +69,7 @@ describe('UserController', () => {
 
   describe('remove', () => {
     it('should delete a user', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValueOnce(testUser);
+      mockUserRepository.findOneBy.mockResolvedValueOnce(testUser);
       const removeSpy =
       mockUserRepository.delete.mockResolvedValueOnce(undefined);
 

@@ -68,9 +68,7 @@ export class UserService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
 
-      throw new InternalServerErrorException(
-        'Something went wrong, Try again!',
-      );
+      throw error;
     }
   }
 }
