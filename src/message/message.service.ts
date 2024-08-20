@@ -8,7 +8,7 @@ import {
 import { Message } from './message.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MessageRegister } from './message.dto';
+import { MessageRegister } from './message.type';
 
 @Injectable()
 export class MessageService {

@@ -13,10 +13,10 @@ export class Message {
   id: number;
 
   @Column({ unique: true })
-  senderId: number;
+  userId: number;
 
   @Column({ unique: true })
-  receiverId: number;
+  conversationId: number;
 
   @Column()
   message: string;

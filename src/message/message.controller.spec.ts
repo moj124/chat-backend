@@ -3,8 +3,6 @@ import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { HttpException } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { ConversationService } from '../conversation/conversation.service';
 
 const mockMessageService = {
   create: jest.fn(),
@@ -14,32 +12,15 @@ const mockMessageService = {
   remove: jest.fn(),
 };
 
-const mockUserService = {
-  create: jest.fn(),
-  findOne: jest.fn(),
-  findAll: jest.fn(),
-  update: jest.fn(),
-  remove: jest.fn(),
-};
-
-const mockConversationService = {
-  create: jest.fn(),
-  findOne: jest.fn(),
-  findAll: jest.fn(),
-  update: jest.fn(),
-  remove: jest.fn(),
-};
-
-const testMessage = {
+const testMessage: Message = {
   id: 1,
   message: 'Hello',
-  senderId: 1,
-  receiverId: 2,
-  lastName: 'last',
+  userId: 1,
+  conversationId: 2,
   createdAt: new Date(),
   updatedAt: new Date(),
   deleteAt: null,
-} as Message;
+};
 
 describe('MessageController', () => {
   let controller: MessageController;
@@ -52,14 +33,6 @@ describe('MessageController', () => {
         {
           provide: MessageService,
           useValue: mockMessageService,
-        },
-        {
-          provide: UserService,
-          useValue: mockUserService,
-        },
-        {
-          provide: ConversationService,
-          useValue: mockConversationService,
         },
       ],
     }).compile();
@@ -106,11 +79,11 @@ describe('MessageController', () => {
     });
   });
 
-  describe('send', () => {
-    it('should send a message', async () => {
+  describe('create', () => {
+    it('should create a message', async () => {
       mockMessageService.findOne.mockResolvedValueOnce(null);
       mockMessageService.create.mockResolvedValueOnce(testMessage);
-      const result = await controller.send(testMessage);
+      const result = await controller.create(testMessage);
 
       expect(result).toStrictEqual(testMessage);
     });

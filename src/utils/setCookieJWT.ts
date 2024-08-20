@@ -8,7 +8,8 @@ const setCookieJWT = (response: Response, token: string) => {
   response.cookie('jwt', token, {
     maxAge,
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
+    path:'/',
     secure: process.env.NODE_ENV !== 'development',
   });
 };

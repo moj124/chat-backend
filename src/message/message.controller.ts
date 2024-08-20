@@ -1,6 +1,5 @@
 import {
   Controller,
-  Post,
   Param,
   Get,
   BadRequestException,
@@ -8,22 +7,21 @@ import {
   HttpStatus,
   UseGuards,
   Body,
+  Put,
+  Delete,
 } from '@nestjs/common';
 
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
-import { MessageRegister } from './message.dto';
-import { Conversation } from '../conversation/conversation.entity';
-import { ConversationService } from '../conversation/conversation.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { MessageRegister } from './message.type';
+// import { AuthGuard } from '../auth/auth.guard';
 import isMessage from '../utils/isMessage';
 
 @Controller('messages')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class MessageController {
   constructor(
     private readonly messageService: MessageService,
-    private readonly conversationService: ConversationService,
   ) {}
 
   @Get('/')
@@ -36,8 +34,8 @@ export class MessageController {
     return await this.messageService.findOne(message);
   }
 
-  @Post('/send')
-  async send(@Body() message: MessageRegister) {
+  @Put('/create')
+  async create(@Body() message: MessageRegister) {
     try {
       const checkMessage = await this.messageService.findOne(message);
       if (isMessage(checkMessage))
@@ -47,21 +45,13 @@ export class MessageController {
       if (!isMessage(createdMessage))
         throw new BadRequestException('Message already exists');
 
-      let checkConversation: Conversation =
-        await this.conversationService.findOne({
-          participants: [message.receiverId, message.senderId],
-        });
-      if (!checkConversation)
-        checkConversation =
-          await this.conversationService.create(createdMessage);
-
       return createdMessage;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Post('/remove/:id')
+  @Delete('/remove/:id')
   async remove(@Param() message: Message) {
     return await this.messageService.remove(message);
   }

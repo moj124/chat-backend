@@ -1,5 +1,5 @@
 export interface MessageRegister {
-  senderId: number;
-  receiverId: number;
+  userId: number;
+  conversationId: number;
   message: string;
 }

@@ -25,7 +25,7 @@ down:
 
 # starts the images which runs in the an isolated environment
 up-all:
-	${DOCKER_COMPOSE} up -d --watch
+	${DOCKER_COMPOSE} up -d
 .PHONY: up-all
 
 start:

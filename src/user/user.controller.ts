@@ -71,13 +71,14 @@ export class UserController {
   }
 
   @Post('/login')
+  @HttpCode(200)
   async login(
     @Body() { username, password }: UserLogin,
     @Res({ passthrough: true }) response: Response,
   ) {
     try {
       const checkUser = await this.userService.findOne({ username });
-
+      console.log(checkUser)
       if (!isUser(checkUser))
         throw new BadRequestException("User doesn't exists");
       if (!compareSync(password, checkUser.password))

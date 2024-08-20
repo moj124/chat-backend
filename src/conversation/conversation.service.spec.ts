@@ -3,7 +3,7 @@ import { ConversationService } from './conversation.service';
 import { Conversation } from './conversation.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
-import { Message } from '../message/message.entity';
+import ConversationRegister from './conversation.type';
 
 describe('ConversationController', () => {
   let service: ConversationService;
@@ -16,25 +16,21 @@ describe('ConversationController', () => {
     remove: jest.fn()
   };
 
-  const testConversation = {
-    id: 1,
-    participants: [1,2],
+  const testConversation: Conversation = {
+    id:1,
+    name: 'convo',
+    participants: [1],
     messages: [1],
     createdAt: new Date(),
     updatedAt: new Date(),
     deleteAt: null,
-  } as Conversation;
-
-  const testMessage = {
-    id: 1,
-    message: 'Hello',
-    senderId: 1,
-    receiverId: 2,
-    lastName: 'last',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-  } as Message;
+  };
+  
+  const testConversationRegister: ConversationRegister = {
+    name: 'convo',
+    participants: [1],
+    messages: [1],
+  };
   
   beforeEach(async () => {
     const testModule: TestingModule = await Test.createTestingModule({
@@ -112,7 +108,7 @@ describe('ConversationController', () => {
       const createSpy =
         mockConversationRepository.save.mockResolvedValueOnce(undefined);
 
-      await service.create(testMessage);
+      await service.create(testConversationRegister);
 
       expect(createSpy).toHaveBeenCalledWith(testConversation);
     });

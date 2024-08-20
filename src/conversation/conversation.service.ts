@@ -7,7 +7,7 @@ import {
 import { Conversation } from './conversation.entity';
 import {  Repository } from 'typeorm';
 import {  InjectRepository } from '@nestjs/typeorm';
-import { Message } from '../message/message.entity';
+import ConversationRegister from './conversation.type';
 
 @Injectable()
 export class ConversationService {
@@ -31,12 +31,13 @@ export class ConversationService {
     return conversation;
   }
 
-  async create({ id, receiverId, senderId }: Message): Promise<Conversation> {
+  async create({ name, participants }: ConversationRegister) : Promise<Conversation> {
     try {
       const createdConversation: Conversation =
         await this.conversationRepository.create({
-          participants: [receiverId, senderId],
-          messages: [id],
+          name: name,
+          participants,
+          messages: [],
         });
 
         return await this.conversationRepository.save(createdConversation);

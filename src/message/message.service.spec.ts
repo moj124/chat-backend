@@ -3,6 +3,7 @@ import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { MessageRegister } from './message.type';
 
 describe('MessageController', () => {
   let service: MessageService;
@@ -15,16 +16,11 @@ describe('MessageController', () => {
     delete: jest.fn()
   };
 
-  const testMessage = {
-    id: 1,
+  const testMessage: MessageRegister = {
     message: 'Hello',
-    senderId: 1,
-    receiverId: 2,
-    lastName: 'last',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
-  } as Message;
+    userId: 1,
+    conversationId: 2,
+  };
 
   beforeEach(async () => {
     const testModule: TestingModule = await Test.createTestingModule({
