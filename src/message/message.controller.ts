@@ -5,7 +5,6 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
-  UseGuards,
   Body,
   Put,
   Delete,
@@ -14,11 +13,9 @@ import {
 import { MessageService } from './message.service';
 import { Message } from './message.entity';
 import { MessageRegister } from './message.type';
-// import { AuthGuard } from '../auth/auth.guard';
 import isMessage from '../utils/isMessage';
 
 @Controller('messages')
-// @UseGuards(AuthGuard)
 export class MessageController {
   constructor(
     private readonly messageService: MessageService,
