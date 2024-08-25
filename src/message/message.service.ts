@@ -23,6 +23,10 @@ export class MessageService {
     return await this.messageRepository.find();
   }
 
+  async findAllByConversation(criteria : Partial<Message>): Promise<Message[]> {
+    return await this.messageRepository.findBy(criteria);
+  }
+
   async findOne(criteria: Partial<Message>): Promise<Message | null> {
     const message = await this.messageRepository.findOneBy(criteria);
     if (!message) return null;

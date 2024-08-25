@@ -8,23 +8,96 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { MessageRegister } from '../message/message.type';
+import { MessageService } from '../message/message.service';
+import ConversationRegister from '../conversation/conversation.type';
+import { ConversationService } from '../conversation/conversation.service';
 
-import { AddMessageDto } from './addMessage.dto';
-
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({ cors: { origin: process.env.APP_URL } })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
 
   private logger = new Logger('ChatGateway');
 
-  @SubscribeMessage('chat')
-  handleMessage(@MessageBody() payload: AddMessageDto): AddMessageDto {
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly conversationService: ConversationService,
+  ) {}
+
+  @SubscribeMessage('chatCreateMessage')
+  async handleCreateMessage(@MessageBody() {conversationId, userId, message}: MessageRegister) {
     this.logger.log(
-      `Message received: ${payload.id} - ${payload.userId} - ${payload.body}`,
+      `Message received: ${conversationId} - ${userId} - ${message}`,
     );
-    this.server.emit('chat', payload);
-    return payload;
+
+    const payload: MessageRegister = { 
+      conversationId,
+      userId,
+      message
+    };
+    const createdMessage = await this.messageService.create(payload);
+    const conversationMessages = await this.messageService.findAllByConversation({conversationId})
+    
+    this.server.emit('chatCreateMessage', conversationMessages);
+
+    let conversation = await this.conversationService.findOne({id: conversationId});
+    if(!conversation) throw Error('Invalid conversationId provided');
+
+    conversation = {
+      ...conversation,
+      messages: [...conversation.messages, createdMessage.id],
+    }
+    await this.conversationService.update(conversation)
+  }
+
+  @SubscribeMessage('chatCreateConversation')
+  async handleCreateConversation(@MessageBody() {name, participants}: ConversationRegister) {
+    this.logger.log(
+      `Conversation created: ${name} - ${participants}`,
+    );
+
+    const payload: ConversationRegister = { 
+      name,
+      participants,
+      messages: [],
+    };
+    const createdConversation = await this.conversationService.create(payload);
+
+    this.server.emit('chatCreateConversation', createdConversation);
+  }
+
+  @SubscribeMessage('chatLoadConversation')
+  async handleLoadConversation(@MessageBody() {conversationId}: MessageRegister) {
+    this.logger.log(
+      `Conversation loaded: ${conversationId}`,
+    );
+
+    const conversationMessages = await this.messageService.findAllByConversation({conversationId});
+
+    this.server.emit('chatLoadConversation', conversationMessages);
+  }
+
+  @SubscribeMessage('chatDeleteConversation')
+  async handleDeleteConversation(@MessageBody() {conversationId}: {conversationId: number}) {
+    this.logger.log(
+      `Conversation deleted: ${conversationId}`,
+    );
+
+    const conversationMessages = await this.messageService.findAllByConversation(
+      {conversationId}
+    );
+
+    Promise.all(conversationMessages.map((elem) => this.messageService.remove(
+        {id: elem.id}
+      )
+    ));
+
+    const toDeleteConversation = await this.conversationService.findOne({id: conversationId});
+
+    await this.conversationService.remove(toDeleteConversation);
+
+    this.server.emit('chatDeleteConversation', toDeleteConversation);
   }
 
   // it will be handled when a client connects to the server

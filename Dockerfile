@@ -20,6 +20,7 @@ ENV NODE_ENV=${NODE_ENV}
 RUN npm i --include=dev
 COPY  --link . .
 EXPOSE 3000
+CMD [ "npm", "run", "start:dev"]
 
 FROM base AS build
 RUN npm ci 

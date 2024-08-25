@@ -12,10 +12,10 @@ export class Message {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   userId: number;
 
-  @Column({ unique: true })
+  @Column()
   conversationId: number;
 
   @Column()

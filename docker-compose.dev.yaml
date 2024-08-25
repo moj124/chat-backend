@@ -36,7 +36,6 @@ services:
       - /app/node_modules
     ports:
       - 3000:3000
-    command: npm run start:dev
     develop:
       watch:
         - action: sync
