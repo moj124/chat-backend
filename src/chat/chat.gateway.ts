@@ -62,6 +62,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       participants,
       messages: [],
     };
+    this.logger.log(`Payload being passed: ${JSON.stringify(payload)}`);
     const createdConversation = await this.conversationService.create(payload);
 
     this.server.emit('chatCreateConversation', createdConversation);
