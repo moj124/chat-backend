@@ -15,10 +15,10 @@ export class Conversations {
   @Column()
   name: string;
 
-  @Column('simple-array')
+  @Column('int', {array: true})
   participants: number[];
 
-  @Column('simple-array')
+  @Column('int', {array: true})
   messages: number[];
 
   @CreateDateColumn()
