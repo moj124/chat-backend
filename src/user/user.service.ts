@@ -40,7 +40,7 @@ export class UserService {
           deleteAt: null,
         }
       );
-
+      console.log('createdUser', createdUser);
       return await this.userRepository.save(createdUser);
     } catch (error) {
       this.logger.error(error.message, error.stack);
