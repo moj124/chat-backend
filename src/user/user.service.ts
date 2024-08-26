@@ -32,7 +32,14 @@ export class UserService {
 
   async create(user: UserRegister): Promise<User> {
     try {
-      const createdUser: User = await this.userRepository.create(user);
+      const createdUser: User = await this.userRepository.create(
+        {
+          ...user,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deleteAt: null,
+        }
+      );
 
       return await this.userRepository.save(createdUser);
     } catch (error) {
