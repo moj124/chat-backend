@@ -35,8 +35,8 @@ export class ConversationService {
     try {
       const createdConversation: Conversations =
         await this.conversationRepository.create({
-          name: name,
-          participants: participants.join(','),
+          name,
+          participants,
           messages: [],
           createdat: new Date(),
           updatedat: new Date(),
