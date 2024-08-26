@@ -42,6 +42,7 @@ export class ConversationService {
           updatedat: new Date(),
           deleteat: null,
         });
+      this.logger.log(`Payload being passed: ${JSON.stringify(createdConversation)}`);
 
         return await this.conversationRepository.save(createdConversation);
     } catch (error) {
