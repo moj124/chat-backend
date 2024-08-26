@@ -3,14 +3,14 @@ import { Users } from '../user/user.entity';
 
 export const userRegisterFixtures: UserRegister[] = [
   {
-    firstName: 'John',
-    lastName: 'Doe',
+    firstname: 'John',
+    lastname: 'Doe',
     username: 'john.doe@example.com',
     password: 'securepassword', 
   },
   {
-    firstName: 'James',
-    lastName: 'Reid',
+    firstname: 'James',
+    lastname: 'Reid',
     username: 'james.reid@example.com',
     password: 'securepassword',
   },
@@ -19,8 +19,8 @@ export const userRegisterFixtures: UserRegister[] = [
 export const userFixtures: Users[] = [
   {
     id: 10,
-    firstName: 'Johnny',
-    lastName: 'Gray',
+    firstname: 'Johnny',
+    lastname: 'Gray',
     username: 'johnny.gray@example.com',
     password: 'securepassword',
     createdat: new Date(),
@@ -29,8 +29,8 @@ export const userFixtures: Users[] = [
   },
   {
     id: 11,
-    firstName: 'Casper',
-    lastName: 'Jones',
+    firstname: 'Casper',
+    lastname: 'Jones',
     username: 'casper.jones@example.com',
     password: 'securepassword',
     createdat: new Date(),

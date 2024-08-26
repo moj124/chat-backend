@@ -6,8 +6,8 @@ const isUser = (user: Users) => {
     typeof user.id === 'number' &&
     typeof user.username === 'string' &&
     typeof user.password === 'string' &&
-    typeof user.firstName === 'string' &&
-    typeof user.lastName === 'string'
+    typeof user.firstname === 'string' &&
+    typeof user.lastname === 'string'
   );
 };
 export default isUser;

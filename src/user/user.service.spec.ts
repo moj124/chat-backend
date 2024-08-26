@@ -18,8 +18,8 @@ describe('UserController', () => {
   const testUser = {
     username: 'root1',
     password: 'root',
-    firstName: 'first',
-    lastName: 'last',
+    firstname: 'first',
+    lastname: 'last',
   } as Users;
 
   beforeEach(async () => {

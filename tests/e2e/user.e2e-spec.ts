@@ -71,7 +71,7 @@ describe('AppController (e2e)', () => {
   describe('/POST users/update', () => {
     it('should update a user record', () => {
       const user = userFixtures[0];
-      user.firstName = 'Jackson';
+      user.firstname = 'Jackson';
   
       return request(app.getHttpServer())
         .post('/users/update')
@@ -79,7 +79,7 @@ describe('AppController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toEqual(
-            expect.objectContaining({ firstName: user.firstName, lastName: user.lastName }),
+            expect.objectContaining({ firstname: user.firstname, lastname: user.lastname }),
           );
         });
     });
@@ -95,7 +95,7 @@ describe('AppController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toEqual(
-            expect.objectContaining({ firstName: user.firstName, username: user.username }),
+            expect.objectContaining({ firstname: user.firstname, username: user.username }),
           );
         });
     });
@@ -130,8 +130,8 @@ describe('AppController (e2e)', () => {
   describe('/POST users/register', () => {
     it('should create a user', () => {
       const user = {
-        firstName: 'Jane',
-        lastName: 'Sir',
+        firstname: 'Jane',
+        lastname: 'Sir',
         username: 'jane.sir@example.com',
         password: 'securepassword', 
       }
@@ -142,7 +142,7 @@ describe('AppController (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toEqual(
-            expect.objectContaining({ firstName: user.firstName, lastName: user.lastName }),
+            expect.objectContaining({ firstname: user.firstname, lastname: user.lastname }),
           );
         });
     });

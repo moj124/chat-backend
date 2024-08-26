@@ -4,15 +4,15 @@ import { UserRegister } from '../user/user.dto';
 const hashPasswordUser = ({
   username,
   password,
-  firstName,
-  lastName,
+  firstname,
+  lastname,
 }: UserRegister): UserRegister => {
   const hash: string = hashSync(password, 10);
   return {
     username,
     password: hash,
-    firstName,
-    lastName,
+    firstname,
+    lastname,
   };
 };
 export default hashPasswordUser;

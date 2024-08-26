@@ -40,7 +40,7 @@ Description:
 - Create a user with a given body.
 
 Body:
-- {username: string, password: string,firstName: string,lastName: string}
+- {username: string, password: string,firstname: string,lastname: string}
 
 ### POST users/remove/:id
 Description:

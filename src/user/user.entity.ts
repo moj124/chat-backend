@@ -19,10 +19,10 @@ export class Users {
   password: string;
 
   @Column()
-  firstName: string;
+  firstname: string;
 
   @Column()
-  lastName: string;
+  lastname: string;
 
   @CreateDateColumn()
   createdat: Date;

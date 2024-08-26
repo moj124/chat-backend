@@ -27,22 +27,22 @@ const testUser = {
   id: 1,
   username: 'root1',
   password: 'root',
-  firstName: 'first',
-  lastName: 'last',
+  firstname: 'first',
+  lastname: 'last',
 } as Users;
 
 const testRegister = {
   username: 'root1',
   password: 'root',
-  firstName: 'first',
-  lastName: 'last',
+  firstname: 'first',
+  lastname: 'last',
 } as UserRegister;
 
 const testLogin = {
   username: 'root1',
   password: 'root',
-  firstName: 'first',
-  lastName: 'last',
+  firstname: 'first',
+  lastname: 'last',
 } as UserLogin;
 
 describe('UserController', () => {
