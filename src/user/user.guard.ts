@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 
 @Injectable()
 export class UserGuard implements CanActivate {
@@ -13,7 +13,7 @@ export class UserGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user: User = request.body;
+    const user: Users = request.body;
 
     if (!this.validateUser(user)) {
       throw new BadRequestException('Invalid user object');
@@ -21,7 +21,7 @@ export class UserGuard implements CanActivate {
     return true;
   }
 
-  validateUser(user: User): boolean {
+  validateUser(user: Users): boolean {
     return (
       user &&
       typeof user.id === 'number' &&

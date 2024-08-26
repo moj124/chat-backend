@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { MessageService } from './message.service';
-import { Message } from './message.entity';
+import { Messages } from './message.entity';
 import { MessageRegister } from './message.type';
 import isMessage from '../utils/isMessage';
 
@@ -27,7 +27,7 @@ export class MessageController {
   }
 
   @Get('/:id')
-  async find(@Param() message: Message) {
+  async find(@Param() message: Messages) {
     return await this.messageService.findOne(message);
   }
 
@@ -36,11 +36,11 @@ export class MessageController {
     try {
       const checkMessage = await this.messageService.findOne(message);
       if (isMessage(checkMessage))
-        throw new BadRequestException('Message already exists');
+        throw new BadRequestException('Messages already exists');
 
-      const createdMessage: Message = await this.messageService.create(message);
+      const createdMessage: Messages = await this.messageService.create(message);
       if (!isMessage(createdMessage))
-        throw new BadRequestException('Message already exists');
+        throw new BadRequestException('Messages already exists');
 
       return createdMessage;
     } catch (error) {
@@ -49,7 +49,7 @@ export class MessageController {
   }
 
   @Delete('/remove/:id')
-  async remove(@Param() message: Message) {
+  async remove(@Param() message: Messages) {
     return await this.messageService.remove(message);
   }
 }

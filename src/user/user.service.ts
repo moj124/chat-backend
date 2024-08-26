@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRegister } from './user.dto';
@@ -15,24 +15,24 @@ export class UserService {
   private logger = new Logger();
 
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<Users[]> {
     return await this.userRepository.find();
   }
 
-  async findOne(criteria: Partial<User>): Promise<User | null> {
+  async findOne(criteria: Partial<Users>): Promise<Users | null> {
     const user = await this.userRepository.findOneBy(criteria);
     if (!user) return null;
 
     return user;
   }
 
-  async create(user: UserRegister): Promise<User> {
+  async create(user: UserRegister): Promise<Users> {
     try {
-      const createdUser: User = await this.userRepository.create(
+      const createdUser: Users = await this.userRepository.create(
         {
           ...user,
           createdat: new Date(),
@@ -51,7 +51,7 @@ export class UserService {
     }
   }
 
-  async update(user: User): Promise<User> {
+  async update(user: Users): Promise<Users> {
     try {
       await this.userRepository.update(user.id, user);
       return user;
@@ -59,17 +59,17 @@ export class UserService {
       this.logger.error(error.message, error.stack);
 
       throw new InternalServerErrorException(
-        'User doesn\'t exist',
+        'Users doesn\'t exist',
       );
     }
   }
 
-  async remove(criteria: Partial<User>): Promise<void> {    
+  async remove(criteria: Partial<Users>): Promise<void> {    
     try {
       if (!criteria) throw new BadRequestException('Invalid user object');
 
       const user = await this.userRepository.findOneBy(criteria);
-      if (!user) throw new NotFoundException('User not found');
+      if (!user) throw new NotFoundException('Users not found');
 
       await this.userRepository.delete(user);
     } catch (error) {

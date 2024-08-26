@@ -6,7 +6,7 @@ import { UserService } from '../../src/user/user.service';
 import { getDataSourceToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { loadFixtures } from '../../src/fixtures/fixture-loader';
-import { User } from '../../src/user/user.entity';
+import { Users } from '../../src/user/user.entity';
 import { userFixtures, userRegisterFixtures } from '../../src/fixtures/user.fixture';
 
 describe('AppController (e2e)', () => {
@@ -28,7 +28,7 @@ describe('AppController (e2e)', () => {
     await app.init();
 
     if (!dataSource.isInitialized) await dataSource.initialize();
-    const userRepository = dataSource.getRepository(User);
+    const userRepository = dataSource.getRepository(Users);
     await userRepository.clear();
     await loadFixtures(userService);
   });

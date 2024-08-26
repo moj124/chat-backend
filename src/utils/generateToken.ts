@@ -1,7 +1,7 @@
 import { sign } from 'jsonwebtoken';
-import { User } from '../user/user.entity';
+import { Users } from '../user/user.entity';
 
-const generateToken = (user: User) => {
+const generateToken = (user: Users) => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error('JWT_SECRET environment variable not set');

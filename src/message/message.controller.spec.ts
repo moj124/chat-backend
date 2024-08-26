@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessageController } from './message.controller';
 import { MessageService } from './message.service';
-import { Message } from './message.entity';
+import { Messages } from './message.entity';
 import { HttpException } from '@nestjs/common';
 
 const mockMessageService = {
@@ -12,7 +12,7 @@ const mockMessageService = {
   remove: jest.fn(),
 };
 
-const testMessage: Message = {
+const testMessage: Messages = {
   id: 1,
   message: 'Hello',
   userId: 1,
@@ -53,7 +53,7 @@ describe('MessageController', () => {
 
     it('should not find a message', async () => {
       try {
-        await controller.find({} as Message);
+        await controller.find({} as Messages);
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
         expect(error.message).toBe(

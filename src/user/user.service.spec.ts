@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 
@@ -20,14 +20,14 @@ describe('UserController', () => {
     password: 'root',
     firstName: 'first',
     lastName: 'last',
-  } as User;
+  } as Users;
 
   beforeEach(async () => {
     const testModule: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(Users),
           useValue: mockUserRepository,
         },
       ],
@@ -40,7 +40,7 @@ describe('UserController', () => {
     it('should return an array of users', async () => {
       mockUserRepository.find.mockResolvedValueOnce([testUser]);
 
-      const users: User[] = await service.findAll();
+      const users: Users[] = await service.findAll();
       expect(users).toEqual([testUser]);
     });
 
@@ -88,7 +88,7 @@ describe('UserController', () => {
         fail('remove() should have thrown NotFoundException');
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe('User not found');
+        expect(error.message).toBe('Users not found');
       }
     });
   });

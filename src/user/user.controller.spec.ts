@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 import { HttpException } from '@nestjs/common';
 import { UserLogin, UserRegister } from './user.dto';
 import isUser from '../utils/isUser';
@@ -29,7 +29,7 @@ const testUser = {
   password: 'root',
   firstName: 'first',
   lastName: 'last',
-} as User;
+} as Users;
 
 const testRegister = {
   username: 'root1',
@@ -78,7 +78,7 @@ describe('UserController', () => {
 
     it('should not find a user', async () => {
       try {
-        await controller.find({} as User);
+        await controller.find({} as Users);
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
         expect(error.message).toBe('userController.find invalid user object');
@@ -132,7 +132,7 @@ describe('UserController', () => {
         controller.register(testRegister, response),
       ).rejects.toBeInstanceOf(HttpException);
       await expect(controller.register(testRegister, response)).rejects.toThrow(
-        'User already exists',
+        'Users already exists',
       );
     });
   });
@@ -174,7 +174,7 @@ describe('UserController', () => {
         controller.login(testLogin, response),
       ).rejects.toBeInstanceOf(HttpException);
       await expect(controller.login(testLogin, response)).rejects.toThrow(
-        "User doesn't exists",
+        "Users doesn't exists",
       );
     });
   });

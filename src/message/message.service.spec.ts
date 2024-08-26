@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MessageService } from './message.service';
-import { Message } from './message.entity';
+import { Messages } from './message.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { MessageRegister } from './message.type';
@@ -27,7 +27,7 @@ describe('MessageController', () => {
       providers: [
         MessageService,
         {
-          provide: getRepositoryToken(Message),
+          provide: getRepositoryToken(Messages),
           useValue: mockMessageRepository,
         },
       ],
@@ -40,7 +40,7 @@ describe('MessageController', () => {
     it('should return an array of messages', async () => {
       mockMessageRepository.find.mockResolvedValueOnce([testMessage]);
 
-      const messages: Message[] = await service.findAll();
+      const messages: Messages[] = await service.findAll();
       expect(messages).toEqual([testMessage]);
     });
 
@@ -88,7 +88,7 @@ describe('MessageController', () => {
         fail('remove() should have thrown NotFoundException');
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
-        expect(error.message).toBe('Message not found');
+        expect(error.message).toBe('Messages not found');
       }
     });
   });

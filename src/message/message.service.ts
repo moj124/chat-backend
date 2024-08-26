@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Message } from './message.entity';
+import { Messages } from './message.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MessageRegister } from './message.type';
@@ -15,28 +15,28 @@ export class MessageService {
   private logger = new Logger();
 
   constructor(
-    @InjectRepository(Message)
-    private readonly messageRepository: Repository<Message>,
+    @InjectRepository(Messages)
+    private readonly messageRepository: Repository<Messages>,
   ) {}
 
-  async findAll(): Promise<Message[]> {
+  async findAll(): Promise<Messages[]> {
     return await this.messageRepository.find();
   }
 
-  async findAllByConversation(criteria : Partial<Message>): Promise<Message[]> {
+  async findAllByConversation(criteria : Partial<Messages>): Promise<Messages[]> {
     return await this.messageRepository.findBy(criteria);
   }
 
-  async findOne(criteria: Partial<Message>): Promise<Message | null> {
+  async findOne(criteria: Partial<Messages>): Promise<Messages | null> {
     const message = await this.messageRepository.findOneBy(criteria);
     if (!message) return null;
 
     return message;
   }
 
-  async create(message: MessageRegister): Promise<Message> {
+  async create(message: MessageRegister): Promise<Messages> {
     try {
-      const createdMessage: Message =
+      const createdMessage: Messages =
         await this.messageRepository.create(message);
 
       return await this.messageRepository.save(createdMessage);
@@ -49,7 +49,7 @@ export class MessageService {
     }
   }
 
-  async update(message: Message): Promise<Message> {
+  async update(message: Messages): Promise<Messages> {
   try {
       this.messageRepository.save(message);
 
@@ -58,17 +58,17 @@ export class MessageService {
       this.logger.error(error.message, error.stack);
 
       throw new InternalServerErrorException(
-        'Message doesn\'t exist',
+        'Messages doesn\'t exist',
       );
     }
   }
 
-  async remove(criteria: Partial<Message>): Promise<void> {
+  async remove(criteria: Partial<Messages>): Promise<void> {
     try {
       if (!criteria) throw new BadRequestException('Invalid message object');
 
       const message = await this.messageRepository.findOneBy(criteria);
-      if (!message) throw new NotFoundException('Message not found');
+      if (!message) throw new NotFoundException('Messages not found');
 
       await this.messageRepository.delete(message);
     } catch (error) {

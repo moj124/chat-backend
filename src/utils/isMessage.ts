@@ -1,6 +1,6 @@
-import { Message } from '../message/message.entity';
+import { Messages } from '../message/message.entity';
 
-const isMessage = (message: Message) => {
+const isMessage = (message: Messages) => {
   return (
     message &&
     typeof message.id === 'number' &&

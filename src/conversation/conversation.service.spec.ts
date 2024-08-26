@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConversationService } from './conversation.service';
-import { Conversation } from './conversation.entity';
+import { Conversations } from './conversation.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { BadRequestException } from '@nestjs/common';
 import ConversationRegister from './conversation.type';
@@ -16,7 +16,7 @@ describe('ConversationController', () => {
     remove: jest.fn()
   };
 
-  const testConversation: Conversation = {
+  const testConversation: Conversations = {
     id:1,
     name: 'convo',
     participants: [1],
@@ -37,7 +37,7 @@ describe('ConversationController', () => {
       providers: [
         ConversationService,
         {
-          provide: getRepositoryToken(Conversation),
+          provide: getRepositoryToken(Conversations),
           useValue: mockConversationRepository,
         },
       ],
@@ -50,7 +50,7 @@ describe('ConversationController', () => {
     it('should return an array of conversations', async () => {
       mockConversationRepository.find.mockResolvedValueOnce([testConversation]);
 
-      const conversations: Conversation[] = await service.findAll();
+      const conversations: Conversations[] = await service.findAll();
       expect(conversations).toEqual([testConversation]);
     });
 
@@ -97,7 +97,7 @@ describe('ConversationController', () => {
         fail('remove() should have thrown BadRequestException');
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
-        expect(error.message).toBe('Conversation not found');
+        expect(error.message).toBe('Conversations not found');
       }
     });
   });

@@ -3,8 +3,8 @@ import { ChatGateway } from './chat.gateway';
 import { ConversationService } from '../conversation/conversation.service';
 import { MessageService } from '../message/message.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Conversation } from '../conversation/conversation.entity';
-import { Message } from '../message/message.entity';
+import { Conversations } from '../conversation/conversation.entity';
+import { Messages } from '../message/message.entity';
 
 describe('ChatGateway', () => {
   let gateway: ChatGateway;
@@ -32,11 +32,11 @@ describe('ChatGateway', () => {
         ConversationService,
         ChatGateway,
         {
-          provide: getRepositoryToken(Message),
+          provide: getRepositoryToken(Messages),
           useValue: mockMessageRepository,
         },
         {
-          provide: getRepositoryToken(Conversation),
+          provide: getRepositoryToken(Conversations),
           useValue: mockConversationRepository
         }
       ],

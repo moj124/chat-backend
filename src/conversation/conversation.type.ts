@@ -1,4 +1,4 @@
-import { Conversation } from "./conversation.entity";
+import { Conversations } from "./conversation.entity";
 
-type ConversationRegister = Omit<Conversation, 'id' | 'createdat' | 'deleteat' | 'updatedat'>;
+type ConversationRegister = Omit<Conversations, 'id' | 'createdat' | 'deleteat' | 'updatedat'>;
 export default ConversationRegister;

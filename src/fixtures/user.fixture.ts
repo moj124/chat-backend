@@ -1,5 +1,5 @@
 import { UserRegister } from '../user/user.dto';
-import { User } from '../user/user.entity';
+import { Users } from '../user/user.entity';
 
 export const userRegisterFixtures: UserRegister[] = [
   {
@@ -16,7 +16,7 @@ export const userRegisterFixtures: UserRegister[] = [
   },
 ];
 
-export const userFixtures: User[] = [
+export const userFixtures: Users[] = [
   {
     id: 10,
     firstName: 'Johnny',

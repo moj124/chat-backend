@@ -10,7 +10,7 @@ import {
   HttpException,
   HttpStatus 
 } from '@nestjs/common';
-import { Conversation } from './conversation.entity';
+import { Conversations } from './conversation.entity';
 import { ConversationService } from './conversation.service';
 // import { AuthGuard } from '../auth/auth.guard';
 import ConversationRegister from './conversation.type';
@@ -26,7 +26,7 @@ export class ConversationController {
   }
 
   @Get('/:id')
-  async find(@Param() conversation: Conversation) {
+  async find(@Param() conversation: Conversations) {
     return await this.conversationService.findOne(conversation);
   }
 
@@ -35,11 +35,11 @@ export class ConversationController {
     try {
       const checkConversation = await this.conversationService.findOne(conversation);
       if (checkConversation)
-        throw new BadRequestException('Conversation already exists');
+        throw new BadRequestException('Conversations already exists');
 
       const createdConversation = await this.conversationService.create(conversation);
       // if (!isConversation(createdConversation))
-      //   throw new BadRequestException('Conversation isn');
+      //   throw new BadRequestException('Conversations isn');
       return createdConversation;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -47,7 +47,7 @@ export class ConversationController {
   }
 
   @Delete('/remove/:id')
-  async remove(@Param() conversation: Conversation) {
+  async remove(@Param() conversation: Conversations) {
     return await this.conversationService.remove(conversation);
   }
 }

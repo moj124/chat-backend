@@ -17,7 +17,7 @@ import { Response } from 'express';
 import { compareSync } from 'bcrypt';
 
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 
 import { UserRegister, UserLogin } from './user.dto';
 import isUser from '../utils/isUser';
@@ -35,18 +35,18 @@ export class UserController {
   }
 
   @Get('/:id')
-  async find(@Param() user: User) {
+  async find(@Param() user: Users) {
     return await this.userService.findOne(user);
   }
 
   @Patch('/update')
-  async update(@Body() user: User) {
+  async update(@Body() user: Users) {
     return await this.userService.update(user);
   }
 
   @Delete('/remove')
   @HttpCode(204)
-  async remove(@Body() user: User) {
+  async remove(@Body() user: Users) {
     console.log(user);
     return await this.userService.remove(user);
   }
@@ -59,10 +59,10 @@ export class UserController {
     try {
       const checkUser = await this.userService.findOne(user);
       if (isUser(checkUser))
-        throw new BadRequestException('User already exists');
+        throw new BadRequestException('Users already exists');
 
       const hashUser = hashPasswordUser(user);
-      const createdUser: User = await this.userService.create(hashUser);
+      const createdUser: Users = await this.userService.create(hashUser);
 
       const token = generateToken(createdUser);
       setCookieJWT(response, token);
@@ -83,7 +83,7 @@ export class UserController {
       const checkUser = await this.userService.findOne({ username });
       console.log(checkUser)
       if (!isUser(checkUser))
-        throw new BadRequestException("User doesn't exists");
+        throw new BadRequestException("Users doesn't exists");
       if (!compareSync(password, checkUser.password))
         throw new BadRequestException("Password doesn't match");
 

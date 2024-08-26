@@ -28,7 +28,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('chatCreateMessage')
   async handleCreateMessage(@MessageBody() {conversationId, userId, message}: MessageRegister) {
     this.logger.log(
-      `Message received: ${conversationId} - ${userId} - ${message}`,
+      `Messages received: ${conversationId} - ${userId} - ${message}`,
     );
 
     const payload: MessageRegister = { 
@@ -54,7 +54,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('chatCreateConversation')
   async handleCreateConversation(@MessageBody() {name, participants}: ConversationRegister) {
     this.logger.log(
-      `Conversation created: ${name} - ${participants}`,
+      `Conversations created: ${name} - ${participants}`,
     );
 
     const payload: ConversationRegister = { 
@@ -70,7 +70,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('chatLoadConversation')
   async handleLoadConversation(@MessageBody() {conversationId}: MessageRegister) {
     this.logger.log(
-      `Conversation loaded: ${conversationId}`,
+      `Conversations loaded: ${conversationId}`,
     );
 
     const conversationMessages = await this.messageService.findAllByConversation({conversationId});
@@ -81,7 +81,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('chatDeleteConversation')
   async handleDeleteConversation(@MessageBody() {conversationId}: {conversationId: number}) {
     this.logger.log(
-      `Conversation deleted: ${conversationId}`,
+      `Conversations deleted: ${conversationId}`,
     );
 
     const conversationMessages = await this.messageService.findAllByConversation(

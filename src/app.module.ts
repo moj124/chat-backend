@@ -6,9 +6,9 @@ import { ConversationModule } from './conversation/conversation.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { config } from 'dotenv';
-import { User } from './user/user.entity';
-import { Message } from './message/message.entity';
-import { Conversation } from './conversation/conversation.entity';
+import { Users } from './user/user.entity';
+import { Messages } from './message/message.entity';
+import { Conversations } from './conversation/conversation.entity';
 
 config();
 
@@ -25,7 +25,7 @@ const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, NODE_ENV } = process.env;
       synchronize: NODE_ENV === 'development',
       logging: NODE_ENV === 'development',
       dropSchema: NODE_ENV === 'development',
-      entities: [User, Message, Conversation],
+      entities: [Users, Messages, Conversations],
     }),
     UserModule,
     ChatModule,

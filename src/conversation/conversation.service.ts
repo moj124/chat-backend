@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { Conversation } from './conversation.entity';
+import { Conversations } from './conversation.entity';
 import {  Repository } from 'typeorm';
 import {  InjectRepository } from '@nestjs/typeorm';
 import ConversationRegister from './conversation.type';
@@ -14,15 +14,15 @@ export class ConversationService {
   private logger = new Logger();
 
   constructor(
-    @InjectRepository(Conversation)
-    private readonly conversationRepository: Repository<Conversation>,
+    @InjectRepository(Conversations)
+    private readonly conversationRepository: Repository<Conversations>,
   ) {}
 
-  async findAll(): Promise<Conversation[]> {
+  async findAll(): Promise<Conversations[]> {
     return await this.conversationRepository.find();
   }
 
-  async findOne(criteria: Partial<Conversation>): Promise<Conversation | null> {
+  async findOne(criteria: Partial<Conversations>): Promise<Conversations | null> {
     const conversation = await this.conversationRepository.findOneBy({
       id: criteria?.id,
     });
@@ -31,9 +31,9 @@ export class ConversationService {
     return conversation;
   }
 
-  async create({ name, participants }: ConversationRegister) : Promise<Conversation> {
+  async create({ name, participants }: ConversationRegister) : Promise<Conversations> {
     try {
-      const createdConversation: Conversation =
+      const createdConversation: Conversations =
         await this.conversationRepository.create({
           name: name,
           participants,
@@ -49,7 +49,7 @@ export class ConversationService {
     }
   }
 
-  async update(conversation: Conversation): Promise<Conversation> {
+  async update(conversation: Conversations): Promise<Conversations> {
     try {
       await this.conversationRepository.save(conversation);
 
@@ -61,10 +61,10 @@ export class ConversationService {
     }
   }
 
-  async remove(criteria: Partial<Conversation>): Promise<void> {
+  async remove(criteria: Partial<Conversations>): Promise<void> {
     const conversation = await this.findOne(criteria);
     try {
-      if (!conversation) throw new BadRequestException('Conversation not found');
+      if (!conversation) throw new BadRequestException('Conversations not found');
 
       await this.conversationRepository.remove(conversation);
 

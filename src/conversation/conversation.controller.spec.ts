@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConversationController } from './conversation.controller';
 import { ConversationService } from './conversation.service';
-import { Conversation } from './conversation.entity';
+import { Conversations } from './conversation.entity';
 import { HttpException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 
@@ -28,7 +28,7 @@ const testConversation = {
   createdat: new Date(),
   updatedat: new Date(),
   deleteat: null,
-} as Conversation;
+} as Conversations;
 
 describe('ConversationController', () => {
   let controller: ConversationController;
@@ -69,7 +69,7 @@ describe('ConversationController', () => {
 
     it('should not find a conversation', async () => {
       try {
-        await controller.find({} as Conversation);
+        await controller.find({} as Conversations);
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
         expect(error.conversation).toBe(

@@ -1,6 +1,6 @@
-import { User } from '../user/user.entity';
+import { Users } from '../user/user.entity';
 
-const isUser = (user: User) => {
+const isUser = (user: Users) => {
   return (
     user &&
     typeof user.id === 'number' &&
