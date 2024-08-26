@@ -35,9 +35,9 @@ export class UserService {
       const createdUser: User = await this.userRepository.create(
         {
           ...user,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deleteAt: null,
+          createdat: new Date(),
+          updatedat: new Date(),
+          deleteat: null,
         }
       );
       console.log('createdUser', createdUser);

@@ -23,9 +23,9 @@ export const userFixtures: User[] = [
     lastName: 'Gray',
     username: 'johnny.gray@example.com',
     password: 'securepassword',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null
+    createdat: new Date(),
+    updatedat: new Date(),
+    deleteat: null
   },
   {
     id: 11,
@@ -33,9 +33,9 @@ export const userFixtures: User[] = [
     lastName: 'Jones',
     username: 'casper.jones@example.com',
     password: 'securepassword',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null
+    createdat: new Date(),
+    updatedat: new Date(),
+    deleteat: null
   },
 ];
 

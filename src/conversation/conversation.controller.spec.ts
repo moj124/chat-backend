@@ -25,9 +25,9 @@ const testConversation = {
   id: 1,
   participants: [1,2],
   messages: [1],
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deleteAt: null,
+  createdat: new Date(),
+  updatedat: new Date(),
+  deleteat: null,
 } as Conversation;
 
 describe('ConversationController', () => {

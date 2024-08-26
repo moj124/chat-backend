@@ -25,11 +25,11 @@ export class User {
   lastName: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdat: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedat: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deleteAt: Date | null;
+  deleteat: Date | null;
 }

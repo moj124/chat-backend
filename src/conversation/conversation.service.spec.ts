@@ -21,9 +21,9 @@ describe('ConversationController', () => {
     name: 'convo',
     participants: [1],
     messages: [1],
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    deleteAt: null,
+    createdat: new Date(),
+    updatedat: new Date(),
+    deleteat: null,
   };
   
   const testConversationRegister: ConversationRegister = {

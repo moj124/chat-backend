@@ -17,9 +17,9 @@ const testMessage: Message = {
   message: 'Hello',
   userId: 1,
   conversationId: 2,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  deleteAt: null,
+  createdat: new Date(),
+  updatedat: new Date(),
+  deleteat: null,
 };
 
 describe('MessageController', () => {
