@@ -37,7 +37,13 @@ export class MessageService {
   async create(message: MessageRegister): Promise<Messages> {
     try {
       const createdMessage: Messages =
-        await this.messageRepository.create(message);
+        await this.messageRepository.create(
+          {...message,
+            createdat: new Date(),
+            updatedat: new Date(),
+            deleteat: null,
+          }
+        );
 
       return await this.messageRepository.save(createdMessage);
     } catch (error) {

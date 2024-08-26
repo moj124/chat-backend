@@ -38,6 +38,9 @@ export class ConversationService {
           name: name,
           participants,
           messages: [],
+          createdat: new Date(),
+          updatedat: new Date(),
+          deleteat: null,
         });
 
         return await this.conversationRepository.save(createdConversation);
